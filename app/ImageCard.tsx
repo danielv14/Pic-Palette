@@ -18,13 +18,13 @@ export const ImageCard = ({
     <div
       className={`${
         random ? "origin-bottom-left" : "origin-top-right"
-      } md:hover:-rotate-1 transition-all bg-slate-700 flex flex-col items-center w-fit rounded-lg h-full`}
+      } md:hover:-rotate-1 transition-all bg-slate-700 flex flex-col items-center w-full rounded-lg h-full`}
     >
       <img
         src={url}
         alt="image"
         className="rounded-lg rounded-b-none mb-4 aspect-square object-cover"
-        width={300}
+        width={"100%"}
         height={300}
         loading="lazy"
       />
