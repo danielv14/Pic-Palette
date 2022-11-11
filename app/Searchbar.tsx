@@ -1,26 +1,13 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export const Searchbar = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("search") ?? "");
-  const submit = () => {
-    const newParams = new URLSearchParams({
-      search: encodeURIComponent(query),
-    });
-    router.push(`/?${newParams.toString()}`);
-    router.refresh();
-  };
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        submit();
-      }}
-    >
+    <form action={`/`} method="get">
       <div className="relative flex-auto">
         <input
           type="text"
@@ -30,6 +17,7 @@ export const Searchbar = () => {
           }}
           value={query}
           placeholder="Search for kittens, dogs or whatever"
+          name="search"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
