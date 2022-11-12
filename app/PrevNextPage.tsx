@@ -2,7 +2,11 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export const PrevNextPage = () => {
+interface PrevNextPageProps {
+  hasNoMoreContent: boolean;
+}
+
+export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
   const searchParams = useSearchParams();
   const currentPage = searchParams.has("page")
     ? parseInt(searchParams.get("page")!)
@@ -17,9 +21,9 @@ export const PrevNextPage = () => {
       >
         <Link
           href={{
-            pathname: "/",
+            pathname: "/search",
             query: {
-              search: searchParams.get("search"),
+              query: searchParams.get("query"),
               page: prevPage,
             },
           }}
@@ -31,12 +35,15 @@ export const PrevNextPage = () => {
           Previous page
         </Link>
       </button>
-      <button className="group bg-indigo-500 hover:bg-indigo-700 transition-colors rounded-full px-4 py-2">
+      <button
+        disabled={hasNoMoreContent}
+        className="group bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
+      >
         <Link
           href={{
-            pathname: "/",
+            pathname: "/search",
             query: {
-              search: searchParams.get("search"),
+              query: searchParams.get("query"),
               page: nextpage,
             },
           }}

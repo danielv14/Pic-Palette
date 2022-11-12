@@ -1,4 +1,4 @@
 export interface ImageSearchParams {
-  search: string;
+  query: string;
   page?: string;
 }

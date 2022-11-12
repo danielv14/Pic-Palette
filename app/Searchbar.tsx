@@ -5,9 +5,9 @@ import { useState } from "react";
 
 export const Searchbar = () => {
   const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("search") ?? "");
+  const [query, setQuery] = useState(searchParams.get("query") ?? "");
   return (
-    <form action={`/`} method="get">
+    <form action={`/search`} method="get">
       <div className="relative flex-auto">
         <input
           type="text"
@@ -17,7 +17,7 @@ export const Searchbar = () => {
           }}
           value={query}
           placeholder="Search for kittens, dogs or whatever"
-          name="search"
+          name="query"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"

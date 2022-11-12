@@ -9,7 +9,7 @@ export default async function handler(
 ) {
   const params = req.query as unknown as ImageSearchParams;
   const photos = await unsplash.searchPhotos({
-    query: params.search,
+    query: params.query,
     page: parseInt(params.page as string),
     perPage: 8,
   });

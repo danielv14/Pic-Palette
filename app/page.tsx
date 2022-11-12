@@ -1,36 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
-import { unsplash } from "../integration/unsplash";
-import { ImageSearchParams } from "../types/ImageSearchParams";
-import { ImageCard } from "./ImageCard";
-import { PrevNextPage } from "./PrevNextPage";
+import React from "react";
+import { Searchbar } from "./Searchbar";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: ImageSearchParams;
-}) {
-  const images = await unsplash.searchPhotos({
-    query: searchParams.search,
-    perPage: 10,
-    page: parseInt(searchParams.page ?? "0"),
-  });
+const page: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <>{children}</>;
+};
 
-  return (
-    <>
-      <div className="grid grid-cols-1 p-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {images.map((image) => (
-          <div key={image.url} className="justify-self-center h-full">
-            <ImageCard
-              url={image.url}
-              hexValues={image.hexValues}
-              userName={image.userName}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="mt-6 mb-6">
-        <PrevNextPage />
-      </div>
-    </>
-  );
-}
+export default page;
