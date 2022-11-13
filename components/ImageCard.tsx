@@ -89,7 +89,7 @@ export const ImageCard = ({
       </div>
       <button
         onClick={copyToClipboard}
-        className="flex items-center text-sm gap-1 rounded-full mt-2 px-2 py-1 text-slate-600 hover:text-slate-500 dark:text-slate-400 dark:hover:text-slate-200"
+        className="flex items-center text-sm gap-1 rounded-full mt-2 px-2 py-1 text-slate-700 hover:text-slate-500 dark:text-slate-400 dark:hover:text-slate-200"
       >
         {hasCopied ? <CopySuccessIcon /> : <CopyIcon />}
         {hasCopied ? "Copied" : "Copy colors"}
