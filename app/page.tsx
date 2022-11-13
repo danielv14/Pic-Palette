@@ -1,8 +1,5 @@
-import React from "react";
-import { Searchbar } from "./Searchbar";
-
-const page: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <>{children}</>;
+const page = () => {
+  return <></>;
 };
 
 export default page;
