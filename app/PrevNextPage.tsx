@@ -32,12 +32,13 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
     <div className="flex justify-center items-center gap-3">
       <form action="/search" method="get">
         <input
+          readOnly
           type="text"
           name="query"
           value={searchParams.get("query") as string}
           hidden
         />
-        <input type="text" name="page" value={prevPage} hidden />
+        <input readOnly type="text" name="page" value={prevPage} hidden />
         <Button disabled={prevPage < 1}>
           <span className="group-hover:-translate-x-0.5 inline-block transition-transform">
             &#8249;
@@ -47,12 +48,13 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
       </form>
       <form action="/search" method="get">
         <input
+          readOnly
           type="text"
           name="query"
           value={searchParams.get("query") as string}
           hidden
         />
-        <input type="text" name="page" value={nextpage} hidden />
+        <input readOnly type="text" name="page" value={nextpage} hidden />
         <Button disabled={hasNoMoreContent}>
           Next page{" "}
           <span className="group-hover:translate-x-0.5 group-disabled:translate-none inline-block transition-transform">
