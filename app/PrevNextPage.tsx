@@ -5,6 +5,22 @@ interface PrevNextPageProps {
   hasNoMoreContent: boolean;
 }
 
+const Button = ({
+  children,
+  disabled,
+}: {
+  children: React.ReactNode;
+  disabled: boolean;
+}) => (
+  <button
+    disabled={disabled}
+    type="submit"
+    className="group text-slate-200 bg-indigo-500 disabled:bg-slate-300 disabled:cursor-not-allowed dark:disabled:bg-slate-600 disabled:shadow-none disabled:text-slate-400 hover:bg-indigo-700 transition-colors disabled:transition-none rounded-full px-4 py-2"
+  >
+    {children}
+  </button>
+);
+
 export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
   const searchParams = useSearchParams();
   const currentPage = searchParams.has("page")
@@ -22,16 +38,12 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
           hidden
         />
         <input type="text" name="page" value={prevPage} hidden />
-        <button
-          disabled={prevPage < 1}
-          type="submit"
-          className="group text-slate-200 bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
-        >
+        <Button disabled={prevPage < 1}>
           <span className="group-hover:-translate-x-0.5 inline-block transition-transform">
             &#8249;
           </span>{" "}
           Previous page
-        </button>
+        </Button>
       </form>
       <form action="/search" method="get">
         <input
@@ -41,16 +53,12 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
           hidden
         />
         <input type="text" name="page" value={nextpage} hidden />
-        <button
-          type="submit"
-          disabled={hasNoMoreContent}
-          className="group text-slate-200 bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
-        >
+        <Button disabled={hasNoMoreContent}>
           Next page{" "}
-          <span className="group-hover:translate-x-0.5 inline-block transition-transform">
+          <span className="group-hover:translate-x-0.5 group-disabled:translate-none inline-block transition-transform">
             &#8250;
           </span>
-        </button>
+        </Button>
       </form>
     </div>
   );
