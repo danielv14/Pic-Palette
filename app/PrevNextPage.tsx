@@ -17,7 +17,7 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
     <div className="flex justify-center items-center gap-3">
       <button
         disabled={prevPage < 1}
-        className="group bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
+        className="group text-slate-200 bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
       >
         <Link
           href={{
@@ -37,7 +37,7 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
       </button>
       <button
         disabled={hasNoMoreContent}
-        className="group bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
+        className="group text-slate-200 bg-indigo-500 disabled:pointer-events-none disabled:bg-slate-500 disabled:shadow-none hover:bg-indigo-700 transition-colors rounded-full px-4 py-2"
       >
         <Link
           href={{

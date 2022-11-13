@@ -68,7 +68,7 @@ export const ImageCard = ({
     <div
       className={`${
         random ? "origin-bottom-left" : "origin-top-right"
-      } md:hover:-rotate-1 transition-all bg-slate-700 flex flex-col items-center w-full rounded-lg h-full`}
+      } md:hover:-rotate-1 transition-all dark:bg-slate-700 bg-slate-300 flex flex-col items-center w-full rounded-lg h-full`}
     >
       <img
         src={url}
@@ -83,16 +83,16 @@ export const ImageCard = ({
           <div
             key={`hex-${hex}`}
             style={{ background: hex }}
-            className="p-5 rounded-full ring-2 ring-slate-200"
+            className="p-5 rounded-full ring-2 ring-slate-200 dark:ring-slate-200"
           ></div>
         ))}
       </div>
       <button
         onClick={copyToClipboard}
-        className="flex items-center text-sm gap-1 rounded-full mt-2 px-2 py-1 text-slate-400 hover:text-slate-200"
+        className="flex items-center text-sm gap-1 rounded-full mt-2 px-2 py-1 text-slate-600 hover:text-slate-500 dark:text-slate-400 dark:hover:text-slate-200"
       >
         {hasCopied ? <CopySuccessIcon /> : <CopyIcon />}
-        Copy colors
+        {hasCopied ? "Copied" : "Copy colors"}
       </button>
       <p className="p-2 text-xs text-slate-500">
         By: {userName} on{" "}

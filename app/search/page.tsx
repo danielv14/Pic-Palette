@@ -19,7 +19,7 @@ export default async function Home({
   });
 
   const hasImages = !!images.length;
-  const hasNoMoreContent = images.length <= AMOUNT_OF_IMAGES_TO_FETCH;
+  const hasNoMoreContent = images.length < AMOUNT_OF_IMAGES_TO_FETCH;
 
   return (
     <>
