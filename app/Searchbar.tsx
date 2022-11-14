@@ -12,7 +12,7 @@ export const Searchbar = () => {
         <input
           required
           type="text"
-          className="form-input bg-slate-300 dark:bg-slate-700 pl-12 border-none w-full rounded-full placeholder:text-slate-400 dark:placeholder:text-slate-400 py-2 px-3 text-slate-700 dark:text-slate-300"
+          className="form-input bg-slate-200 dark:bg-slate-700 pl-12 border-none w-full rounded-full placeholder:text-slate-400 dark:placeholder:text-slate-400 py-2 px-3 text-slate-700 dark:text-slate-300"
           onChange={(e) => {
             setQuery(e.target.value);
           }}

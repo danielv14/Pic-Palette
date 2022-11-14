@@ -15,7 +15,7 @@ const Button = ({
   <button
     disabled={disabled}
     type="submit"
-    className="group text-slate-200 bg-indigo-500 disabled:bg-slate-300 disabled:cursor-not-allowed dark:disabled:bg-slate-600 disabled:shadow-none disabled:text-slate-400 hover:bg-indigo-700 transition-colors disabled:transition-none rounded-full px-4 py-2"
+    className="group text-slate-200 bg-indigo-500 disabled:bg-slate-200 disabled:cursor-not-allowed dark:disabled:bg-slate-600 disabled:shadow-none disabled:text-slate-400 hover:bg-indigo-700 transition-colors disabled:transition-none rounded-full px-4 py-2"
   >
     {children}
   </button>

@@ -68,7 +68,7 @@ export const ImageCard = ({
     <div
       className={`${
         random ? "origin-bottom-left" : "origin-top-right"
-      } md:hover:-rotate-1 transition-all dark:bg-slate-700 bg-slate-300 flex flex-col items-center w-full rounded-lg h-full`}
+      } md:hover:-rotate-1 transition-all dark:bg-slate-700 bg-slate-200 flex flex-col items-center w-full rounded-lg h-full`}
     >
       <img
         src={url}

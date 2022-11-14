@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <body className="bg-slate-200 dark:bg-slate-800 dark:text-gray-100 text-gray-800 container mx-auto p-2">
+      <body className="bg-slate-300 dark:bg-slate-800 dark:text-gray-100 text-gray-800 container mx-auto p-2">
         <h1 className="text-center pt-4  text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-600">
           Pic Palette
         </h1>
