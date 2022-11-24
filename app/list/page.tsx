@@ -2,18 +2,18 @@ import { ImageCard } from "../../components/ImageCard";
 import { ImageGrid } from "../../components/ImageGrid";
 import { NoImagesAlert } from "../../components/NoImagesAlert";
 import { unsplash } from "../../integration/unsplash";
-import { ImageSearchParams } from "../../types/ImageSearchParams";
+import { ImageListParams } from "../../types/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
 
 const AMOUNT_OF_IMAGES_TO_FETCH = 10;
 
-export default async function Home({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: ImageSearchParams;
+  searchParams: ImageListParams;
 }) {
-  const images = await unsplash.searchPhotos({
-    query: searchParams.query,
+  const images = await unsplash.listPhotos({
+    listType: searchParams.type,
     perPage: AMOUNT_OF_IMAGES_TO_FETCH,
     page: parseInt(searchParams.page ?? "0"),
   });
@@ -23,16 +23,11 @@ export default async function Home({
 
   return (
     <>
-      {!hasImages && (
-        <NoImagesAlert>
-          Found no images. Search for something else.
-        </NoImagesAlert>
-      )}
+      {!hasImages && <NoImagesAlert>Oh no! Found no images :(</NoImagesAlert>}
       {hasImages && (
         <>
-          <h2 className="p-2 md:p-4 text-center md:text-start  text-2xl md:text3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-600">
-            Images of &quot;<span className="italic">{searchParams.query}</span>
-            &quot;
+          <h2 className="p-2 md:p-4 text-center md:text-start text-2xl md:text3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-600">
+            <span className="capitalize">{searchParams.type}</span> images
           </h2>
           <ImageGrid>
             {images.map((image) => (
@@ -47,8 +42,8 @@ export default async function Home({
           </ImageGrid>
           <div className="mt-6 mb-6">
             <PrevNextPage
-              path="/search"
-              pageParam="query"
+              path="/list"
+              pageParam="type"
               hasNoMoreContent={hasNoMoreContent}
             />
           </div>

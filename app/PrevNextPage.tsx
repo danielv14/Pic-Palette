@@ -3,6 +3,8 @@ import { useSearchParams } from "next/navigation";
 
 interface PrevNextPageProps {
   hasNoMoreContent: boolean;
+  path: string;
+  pageParam: string;
 }
 
 const Button = ({
@@ -21,7 +23,11 @@ const Button = ({
   </button>
 );
 
-export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
+export const PrevNextPage = ({
+  hasNoMoreContent,
+  path,
+  pageParam,
+}: PrevNextPageProps) => {
   const searchParams = useSearchParams();
   const currentPage = searchParams.has("page")
     ? parseInt(searchParams.get("page")!)
@@ -30,12 +36,12 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
   const prevPage = currentPage - 1;
   return (
     <div className="flex justify-center items-center gap-3">
-      <form action="/search" method="get">
+      <form action={path} method="get">
         <input
           readOnly
           type="text"
-          name="query"
-          value={searchParams.get("query") as string}
+          name={pageParam}
+          value={searchParams.get(pageParam) as string}
           hidden
         />
         <input readOnly type="text" name="page" value={prevPage} hidden />
@@ -46,12 +52,12 @@ export const PrevNextPage = ({ hasNoMoreContent }: PrevNextPageProps) => {
           Previous page
         </Button>
       </form>
-      <form action="/search" method="get">
+      <form action={path} method="get">
         <input
           readOnly
           type="text"
-          name="query"
-          value={searchParams.get("query") as string}
+          name={pageParam}
+          value={searchParams.get(pageParam) as string}
           hidden
         />
         <input readOnly type="text" name="page" value={nextpage} hidden />
