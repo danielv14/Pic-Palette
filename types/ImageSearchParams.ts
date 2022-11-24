@@ -5,7 +5,7 @@ export interface ImageSearchParams {
   page?: string;
 }
 
-export interface ImageListParams {
+export interface ImageListSearchParams {
   type: OrderBy;
   page?: string;
 }

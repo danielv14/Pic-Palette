@@ -7,15 +7,11 @@ import { PrevNextPage } from "../PrevNextPage";
 
 const AMOUNT_OF_IMAGES_TO_FETCH = 10;
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: ImageSearchParams;
-}) {
+const Home = async ({ searchParams }: { searchParams?: ImageSearchParams }) => {
   const images = await unsplash.searchPhotos({
-    query: searchParams.query,
+    query: searchParams?.query ?? "",
     perPage: AMOUNT_OF_IMAGES_TO_FETCH,
-    page: parseInt(searchParams.page ?? "0"),
+    page: parseInt(searchParams?.page ?? "0"),
   });
 
   const hasImages = !!images.length;
@@ -31,7 +27,8 @@ export default async function Home({
       {hasImages && (
         <>
           <h2 className="p-2 md:p-4 text-center md:text-start  text-2xl md:text3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-600">
-            Images of &quot;<span className="italic">{searchParams.query}</span>
+            Images of &quot;
+            <span className="italic">{searchParams?.query}</span>
             &quot;
           </h2>
           <ImageGrid>
@@ -56,4 +53,6 @@ export default async function Home({
       )}
     </>
   );
-}
+};
+
+export default Home;
