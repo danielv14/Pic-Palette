@@ -3,10 +3,9 @@ import { ImageCard } from "../../components/ImageCard";
 import { ImageGrid } from "../../components/ImageGrid";
 import { NoImagesAlert } from "../../components/NoImagesAlert";
 import { unsplash } from "../../integration/unsplash";
+import { AMOUNT_OF_IMAGES_TO_FETCH } from "../../integration/unsplash/config";
 import { ImageListSearchParams } from "../../types/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
-
-const AMOUNT_OF_IMAGES_TO_FETCH = 12;
 
 type PageProps = {
   searchParams?: ImageListSearchParams;

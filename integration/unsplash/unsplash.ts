@@ -1,9 +1,8 @@
 import { cache } from "react";
 import * as Unsplash from "unsplash-js";
 import { ImageWithPalette } from "../../types/Image";
+import { ACCESS_KEY } from "./config";
 import { getPhotosWithPalettes } from "./getPhotosWithPalettes";
-
-const ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY as string;
 
 const unsplashAPI = Unsplash.createApi({
   accessKey: ACCESS_KEY,
