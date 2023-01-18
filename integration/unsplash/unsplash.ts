@@ -59,10 +59,6 @@ const listPhotos = async ({ perPage, page, listType }: ListPhotosParams) => {
 };
 
 export const unsplash = {
-  /**
-   * Use only when needed for one-off stuff
-   */
-  _unsplashAPI: unsplashAPI,
   searchPhotos: cache(async (params: SearchPhotosParams) =>
     searchPhotos(params)
   ),
