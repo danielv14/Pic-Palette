@@ -6,7 +6,7 @@ import { unsplash } from "../../integration/unsplash";
 import { ImageListSearchParams } from "../../types/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
 
-const AMOUNT_OF_IMAGES_TO_FETCH = 10;
+const AMOUNT_OF_IMAGES_TO_FETCH = 12;
 
 type PageProps = {
   searchParams?: ImageListSearchParams;
