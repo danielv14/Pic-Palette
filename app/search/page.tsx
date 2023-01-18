@@ -5,7 +5,7 @@ import { unsplash } from "../../integration/unsplash";
 import { ImageSearchParams } from "../../types/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
 
-const AMOUNT_OF_IMAGES_TO_FETCH = 10;
+const AMOUNT_OF_IMAGES_TO_FETCH = 12;
 
 const Home = async ({ searchParams }: { searchParams?: ImageSearchParams }) => {
   const images = await unsplash.searchPhotos({
