@@ -1,5 +1,7 @@
 import { cache } from "react";
 import * as Unsplash from "unsplash-js";
+import { ImageListOptions } from "../../schemas/ImageListParams";
+import { ImageSearchOptions } from "../../schemas/ImageSearchParams";
 import { ImageWithPalette } from "../../types/Image";
 import { ACCESS_KEY } from "./config";
 import { getPhotosWithPalettes } from "./getPhotosWithPalettes";
@@ -8,23 +10,11 @@ const unsplashAPI = Unsplash.createApi({
   accessKey: ACCESS_KEY,
 });
 
-interface SearchPhotosParams {
-  query: string;
-  page?: number;
-  perPage?: number;
-}
-
-interface ListPhotosParams {
-  page?: number;
-  perPage?: number;
-  listType: Unsplash.OrderBy;
-}
-
 const searchPhotos = async ({
   query,
   page = 1,
-  perPage = 8,
-}: SearchPhotosParams): Promise<ImageWithPalette[]> => {
+  perPage,
+}: ImageSearchOptions): Promise<ImageWithPalette[]> => {
   const photos = await unsplashAPI.search.getPhotos({
     query,
     page,
@@ -43,11 +33,11 @@ const searchPhotos = async ({
   return photosWithPalettes;
 };
 
-const listPhotos = async ({ perPage, page, listType }: ListPhotosParams) => {
+const listPhotos = async ({ perPage, page, type }: ImageListOptions) => {
   const photos = await unsplashAPI.photos.list({
     page,
     perPage,
-    orderBy: listType,
+    orderBy: type,
   });
   if (photos.errors || !photos.response) {
     return [];
@@ -59,8 +49,8 @@ const listPhotos = async ({ perPage, page, listType }: ListPhotosParams) => {
 };
 
 export const unsplash = {
-  searchPhotos: cache(async (params: SearchPhotosParams) =>
+  searchPhotos: cache(async (params: ImageSearchOptions) =>
     searchPhotos(params)
   ),
-  listPhotos: cache(async (params: ListPhotosParams) => listPhotos(params)),
+  listPhotos: cache(async (params: ImageListOptions) => listPhotos(params)),
 };
