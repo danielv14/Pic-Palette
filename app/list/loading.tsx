@@ -1,10 +1,11 @@
 import { ImageCardLoading } from "../../components/ImageCardLoading";
 import { ImageGrid } from "../../components/ImageGrid";
+import { AMOUNT_OF_IMAGES_TO_FETCH } from "../../integration/unsplash/config";
 
 const loading = () => {
   return (
     <ImageGrid>
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((key) => {
+      {new Array(AMOUNT_OF_IMAGES_TO_FETCH).fill(null).map((key) => {
         return <ImageCardLoading key={key} />;
       })}
     </ImageGrid>
