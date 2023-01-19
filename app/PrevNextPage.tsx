@@ -1,10 +1,12 @@
 "use client";
 import { useSearchParams } from "next/navigation";
+import { PaginationWithTypeOrQuerySchema } from "../schemas/PaginationParams";
+import { ListType } from "../types/ListType";
 
 interface PrevNextPageProps {
   hasNoMoreContent: boolean;
   path: string;
-  pageParam: string;
+  pageParam: ListType;
 }
 
 const Button = ({
@@ -29,19 +31,21 @@ export const PrevNextPage = ({
   pageParam,
 }: PrevNextPageProps) => {
   const searchParams = useSearchParams();
-  const currentPage = searchParams.has("page")
-    ? parseInt(searchParams.get("page")!)
-    : 0;
-  const nextpage = searchParams.has("page") ? currentPage + 1 : 2;
-  const prevPage = currentPage - 1;
+  const paginationParams = PaginationWithTypeOrQuerySchema.parse(
+    Object.fromEntries(searchParams.entries())
+  );
+  const nextpage = paginationParams.page === 0 ? 2 : paginationParams.page + 1;
+  const prevPage = paginationParams.page - 1;
+  const listType = paginationParams[pageParam];
   return (
     <div className="flex justify-center items-center gap-3">
       <form action={path} method="get">
+        <input readOnly type="text" name={pageParam} value={listType} hidden />
         <input
           readOnly
           type="text"
-          name={pageParam}
-          value={searchParams.get(pageParam) as string}
+          name="perPage"
+          value={paginationParams.perPage}
           hidden
         />
         <input readOnly type="text" name="page" value={prevPage} hidden />
@@ -53,11 +57,12 @@ export const PrevNextPage = ({
         </Button>
       </form>
       <form action={path} method="get">
+        <input readOnly type="text" name={pageParam} value={listType} hidden />
         <input
           readOnly
           type="text"
-          name={pageParam}
-          value={searchParams.get(pageParam) as string}
+          name="perPage"
+          value={paginationParams.perPage}
           hidden
         />
         <input readOnly type="text" name="page" value={nextpage} hidden />

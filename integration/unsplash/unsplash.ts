@@ -1,7 +1,7 @@
 import { cache } from "react";
 import * as Unsplash from "unsplash-js";
-import { ImageListParams } from "../../schema/ImageListParams";
-import { ImageSearchOptions } from "../../schema/ImageSearchParams";
+import { ImageListOptions } from "../../schemas/ImageListParams";
+import { ImageSearchOptions } from "../../schemas/ImageSearchParams";
 import { ImageWithPalette } from "../../types/Image";
 import { ACCESS_KEY } from "./config";
 import { getPhotosWithPalettes } from "./getPhotosWithPalettes";
@@ -33,7 +33,7 @@ const searchPhotos = async ({
   return photosWithPalettes;
 };
 
-const listPhotos = async ({ perPage, page, type }: ImageListParams) => {
+const listPhotos = async ({ perPage, page, type }: ImageListOptions) => {
   const photos = await unsplashAPI.photos.list({
     page,
     perPage,
@@ -52,5 +52,5 @@ export const unsplash = {
   searchPhotos: cache(async (params: ImageSearchOptions) =>
     searchPhotos(params)
   ),
-  listPhotos: cache(async (params: ImageListParams) => listPhotos(params)),
+  listPhotos: cache(async (params: ImageListOptions) => listPhotos(params)),
 };
