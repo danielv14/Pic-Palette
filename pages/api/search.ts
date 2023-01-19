@@ -1,17 +1,16 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { unsplash } from "../../integration/unsplash";
-import { ImageSearchParams } from "../../types/ImageSearchParams";
+import { AMOUNT_OF_IMAGES_TO_FETCH } from "../../integration/unsplash/config";
+import { ImageSearchParamsSchema } from "../../schema/ImageSearchParams";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const params = req.query as unknown as ImageSearchParams;
+  const params = ImageSearchParamsSchema.parse(req.query);
   const photos = await unsplash.searchPhotos({
-    query: params.query,
-    page: parseInt(params.page as string),
-    perPage: 8,
+    ...params,
+    perPage: AMOUNT_OF_IMAGES_TO_FETCH,
   });
   res.status(200).json(photos);
 }

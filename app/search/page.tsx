@@ -3,14 +3,14 @@ import { ImageGrid } from "../../components/ImageGrid";
 import { NoImagesAlert } from "../../components/NoImagesAlert";
 import { unsplash } from "../../integration/unsplash";
 import { AMOUNT_OF_IMAGES_TO_FETCH } from "../../integration/unsplash/config";
-import { ImageSearchParams } from "../../types/ImageSearchParams";
+import { ImageSearchParamsSchema } from "../../schema/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
 
-const Home = async ({ searchParams }: { searchParams?: ImageSearchParams }) => {
+const Home = async ({ searchParams }: { searchParams: unknown }) => {
+  const imageSearchParams = ImageSearchParamsSchema.parse(searchParams);
   const images = await unsplash.searchPhotos({
-    query: searchParams?.query ?? "",
+    ...imageSearchParams,
     perPage: AMOUNT_OF_IMAGES_TO_FETCH,
-    page: parseInt(searchParams?.page ?? "0"),
   });
 
   const hasImages = !!images.length;
@@ -27,7 +27,7 @@ const Home = async ({ searchParams }: { searchParams?: ImageSearchParams }) => {
         <>
           <h2 className="p-2 md:p-4 text-center md:text-start  text-2xl md:text3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-600">
             Images of &quot;
-            <span className="italic">{searchParams?.query}</span>
+            <span className="italic">{imageSearchParams.query}</span>
             &quot;
           </h2>
           <ImageGrid>
