@@ -49,8 +49,10 @@ const listPhotos = async ({ perPage, page, type }: ImageListOptions) => {
 };
 
 export const unsplash = {
-  searchPhotos: cache(async (params: ImageSearchOptions) =>
+  searchPhotosByQuery: cache(async (params: ImageSearchOptions) =>
     searchPhotos(params)
   ),
-  listPhotos: cache(async (params: ImageListOptions) => listPhotos(params)),
+  listPhotosByType: cache(async (params: ImageListOptions) =>
+    listPhotos(params)
+  ),
 };

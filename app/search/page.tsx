@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { ImageCard } from "../../components/ImageCard";
 import { ImageGrid } from "../../components/ImageGrid";
 import { NoImagesAlert } from "../../components/NoImagesAlert";
@@ -5,9 +6,13 @@ import { unsplash } from "../../integration/unsplash";
 import { ImageSearchSchema } from "../../schemas/ImageSearchParams";
 import { PrevNextPage } from "../PrevNextPage";
 
-const Home = async ({ searchParams }: { searchParams: unknown }) => {
+type PageProps = {
+  searchParams: z.input<typeof ImageSearchSchema>;
+};
+
+const Home = async ({ searchParams }: PageProps) => {
   const imageSearchOptions = ImageSearchSchema.parse(searchParams);
-  const images = await unsplash.searchPhotos(imageSearchOptions);
+  const images = await unsplash.searchPhotosByQuery(imageSearchOptions);
 
   const hasImages = !!images.length;
   const hasNoMoreContent = images.length < imageSearchOptions.perPage;

@@ -7,6 +7,6 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   const params = ImageSearchSchema.parse(req.query);
-  const photos = await unsplash.searchPhotos(params);
+  const photos = await unsplash.searchPhotosByQuery(params);
   res.status(200).json(photos);
 }

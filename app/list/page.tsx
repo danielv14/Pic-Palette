@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { ImageCard } from "../../components/ImageCard";
 import { ImageGrid } from "../../components/ImageGrid";
 import { NoImagesAlert } from "../../components/NoImagesAlert";
@@ -6,12 +7,12 @@ import { ImageListSchema } from "../../schemas/ImageListParams";
 import { PrevNextPage } from "../PrevNextPage";
 
 type PageProps = {
-  searchParams?: unknown;
+  searchParams?: z.input<typeof ImageListSchema>;
 };
 
 const Page = async (props: PageProps) => {
   const listParams = ImageListSchema.parse(props.searchParams);
-  const images = await unsplash.listPhotos(listParams);
+  const images = await unsplash.listPhotosByType(listParams);
   const hasImages = !!images.length;
   const hasNoMoreContent = images.length < listParams.perPage;
 
