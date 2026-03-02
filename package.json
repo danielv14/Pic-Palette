@@ -14,6 +14,7 @@
     "@tanstack/react-router": "^1.163.0",
     "@tanstack/react-router-ssr-query": "^1.163.0",
     "@tanstack/react-start": "^1.166.0",
+    "nitro": "^3.0.1-alpha.2",
     "node-vibrant": "^3.2.1-alpha.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
