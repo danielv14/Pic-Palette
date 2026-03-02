@@ -8,7 +8,7 @@ export const LoadMoreButton = ({ onClick }: LoadMoreButtonProps) => (
       onClick={onClick}
       className="rounded-full bg-brand-500 px-6 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-brand-600"
     >
-      Visa mer
+      Load more
     </button>
   </div>
 );
