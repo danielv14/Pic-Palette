@@ -4,40 +4,37 @@ import { Searchbar } from "~/components/Searchbar";
 
 const AppLayout = () => (
   <div className="container mx-auto px-4 py-6">
-    <h1 className="pt-10 pb-3 text-center font-display text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-600 md:text-5xl">
+    <h1 className="pt-10 pb-3 text-center font-display text-4xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 md:text-5xl">
       Pic Palette
     </h1>
-    <p className="mb-6 text-center text-md font-bold text-text-secondary md:text-2xl">
-      Search for images to find color palettes to use in your projects!
+    <p className="mb-6 text-center text-base text-text-muted">
+      Search for images to find color palettes to use in your projects
     </p>
     <div className="mx-auto max-w-2xl px-4 py-4">
       <Searchbar />
     </div>
-    <p className="mt-2 mb-8 text-center text-md font-bold text-text-secondary md:text-xl">
-      Or browse{" "}
+    <div className="mt-4 mb-8 flex flex-wrap items-center justify-center gap-2">
       <Link
         to="/list"
         search={{ type: OrderBy.POPULAR }}
-        className="text-brand-400 transition-colors hover:text-brand-300 hover:underline hover:decoration-brand-400"
+        className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
       >
-        popular
-      </Link>{" "}
-      or{" "}
+        Popular
+      </Link>
       <Link
         to="/list"
         search={{ type: OrderBy.LATEST }}
-        className="text-brand-400 transition-colors hover:text-brand-300 hover:underline hover:decoration-brand-400"
+        className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
       >
-        latest
-      </Link>{" "}
-      images, or explore{" "}
+        Latest
+      </Link>
       <Link
         to="/topics"
-        className="text-brand-400 transition-colors hover:text-brand-300 hover:underline hover:decoration-brand-400"
+        className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
       >
-        topics
+        Topics
       </Link>
-    </p>
+    </div>
     <Outlet />
   </div>
 );

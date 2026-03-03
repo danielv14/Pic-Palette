@@ -5,7 +5,7 @@ import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams
 const COLOR_META: Record<UnsplashColor, { label: string; swatch: string }> = {
   black_and_white: { label: "Black & White", swatch: "bg-gradient-to-r from-black to-white" },
   black: { label: "Black", swatch: "bg-black" },
-  white: { label: "White", swatch: "bg-white border border-gray-400" },
+  white: { label: "White", swatch: "bg-white border border-white/30" },
   yellow: { label: "Yellow", swatch: "bg-yellow-400" },
   orange: { label: "Orange", swatch: "bg-orange-500" },
   red: { label: "Red", swatch: "bg-red-500" },
@@ -32,7 +32,7 @@ export const ColorFilter = ({ value, onChange }: ColorFilterProps) => {
 
   return (
     <Select.Root value={value ?? ""} onValueChange={handleValueChange}>
-      <Select.Trigger className="flex cursor-default items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md shadow-brand-500/10 transition-colors hover:bg-gray-50 focus:ring-2 focus:ring-brand-400 focus:outline-none data-[popup-open]:bg-gray-50">
+      <Select.Trigger className="flex cursor-default items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary focus:ring-2 focus:ring-brand-400 focus:outline-none data-[popup-open]:bg-white/10">
         {value ? (
           <>
             <ColorSwatch color={value} />
@@ -45,7 +45,7 @@ export const ColorFilter = ({ value, onChange }: ColorFilterProps) => {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
           fill="currentColor"
-          className="h-4 w-4 text-gray-400"
+          className="h-4 w-4 text-text-muted"
         >
           <path
             fillRule="evenodd"
@@ -57,13 +57,13 @@ export const ColorFilter = ({ value, onChange }: ColorFilterProps) => {
 
       <Select.Portal>
         <Select.Positioner sideOffset={8} className="z-50">
-          <Select.Popup className="overflow-hidden rounded-xl bg-white py-1 shadow-xl shadow-black/10 outline outline-gray-100 transition-[transform,scale,opacity] data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
+          <Select.Popup className="overflow-hidden rounded-xl border border-white/10 bg-surface-1 py-1 shadow-xl backdrop-blur-xl transition-[transform,scale,opacity] data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
             <Select.List>
               <Select.Item
                 value=""
-                className="flex cursor-default items-center gap-2.5 px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 data-[highlighted]:bg-gray-50"
+                className="flex cursor-default items-center gap-2.5 px-3 py-2 text-sm text-text-muted hover:bg-surface-3 data-[highlighted]:bg-surface-3"
               >
-                <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-dashed border-gray-300" />
+                <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-dashed border-text-muted" />
                 <Select.ItemText>Any color</Select.ItemText>
                 <Select.ItemIndicator className="ml-auto">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5 text-brand-500">
@@ -72,13 +72,13 @@ export const ColorFilter = ({ value, onChange }: ColorFilterProps) => {
                 </Select.ItemIndicator>
               </Select.Item>
 
-              <div className="my-1 border-t border-gray-100" />
+              <div className="my-1 border-t border-white/10" />
 
               {UNSPLASH_COLORS.map((color) => (
                 <Select.Item
                   key={color}
                   value={color}
-                  className="flex cursor-default items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 data-[highlighted]:bg-gray-50"
+                  className="flex cursor-default items-center gap-2.5 px-3 py-2 text-sm text-text-secondary hover:bg-surface-3 data-[highlighted]:bg-surface-3"
                 >
                   <ColorSwatch color={color} />
                   <Select.ItemText>{COLOR_META[color].label}</Select.ItemText>

@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Dialog, Menu } from "@base-ui/react";
+import { Link } from "@tanstack/react-router";
 import { sleep } from "~/utils/sleep";
+import { UTM } from "~/utils/utm";
+import { CloseIcon, ExternalLinkIcon } from "~/components/Icons";
 import { Tooltip } from "~/components/Tooltip";
 import { ColorAdjustDialog } from "~/components/ColorAdjustDialog";
+import { RelatedPhotosDrawer } from "~/components/RelatedPhotosDrawer";
 
 interface ImageCardProps {
+  id: string;
   url: string;
   hexValues: string[];
   userName: string;
@@ -67,42 +72,29 @@ const PersonIcon = () => (
   </svg>
 );
 
-const ExternalLinkIcon = () => (
+const RelatedIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth="2"
     stroke="currentColor"
-    className="w-3.5 shrink-0"
+    className="w-4 shrink-0"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+      d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
     />
   </svg>
 );
 
-const CloseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    className="w-4"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-);
 
-const UTM = "?utm_source=pic_palette&utm_medium=referral";
-
-export const ImageCard = ({ url, hexValues, userName, photoUrl, index }: ImageCardProps) => {
+export const ImageCard = ({ id, url, hexValues, userName, photoUrl, index }: ImageCardProps) => {
   const [copiedHex, setCopiedHex] = useState<string | null>(null);
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
+  const [isRelatedDrawerOpen, setIsRelatedDrawerOpen] = useState(false);
 
   const copyAllColors = async () => {
     try {
@@ -125,15 +117,21 @@ export const ImageCard = ({ url, hexValues, userName, photoUrl, index }: ImageCa
 
   return (
     <div
-      className="group animate-fade-in-up relative aspect-square w-full overflow-hidden rounded-2xl"
+      className="group animate-fade-in-up relative aspect-square w-full overflow-hidden rounded-2xl ring-1 ring-white/0 transition-all duration-200 hover:ring-white/15 hover:shadow-lg hover:shadow-brand-500/10"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      <img
-        src={url}
-        alt={`Photo by ${userName}`}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-102"
-        loading="lazy"
-      />
+      <Link
+        to="/photos/$photoId"
+        params={{ photoId: id }}
+        className="absolute inset-0 z-0"
+      >
+        <img
+          src={url}
+          alt={`Photo by ${userName}`}
+          className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-102"
+          loading="lazy"
+        />
+      </Link>
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 backdrop-blur-md [mask-image:linear-gradient(to_bottom,transparent,black_40%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4">
@@ -143,13 +141,13 @@ export const ImageCard = ({ url, hexValues, userName, photoUrl, index }: ImageCa
               <button
                 onClick={() => copyHex(hex)}
                 style={{ background: hex }}
-                className="h-8 w-8 cursor-pointer rounded-full transition-transform hover:z-10 hover:scale-125"
+                className="h-8 w-8 cursor-pointer rounded-full ring-2 ring-transparent transition-all duration-200 hover:z-10 hover:scale-125 hover:ring-white/30"
               />
             </Tooltip>
           ))}
         </div>
         <Menu.Root>
-          <Menu.Trigger className="flex cursor-pointer items-center gap-1 rounded-full px-2 py-0.5 text-xs text-white/60 transition-colors hover:text-white">
+          <Menu.Trigger className="flex cursor-pointer items-center gap-1 rounded-full px-2 py-0.5 text-xs text-white/60 transition-all duration-200 hover:bg-white/10 hover:text-white">
             <AdjustIcon />
             Palette
           </Menu.Trigger>
@@ -170,6 +168,13 @@ export const ImageCard = ({ url, hexValues, userName, photoUrl, index }: ImageCa
                   <CopyIcon />
                   Copy all colors
                 </Menu.Item>
+                <Menu.Item
+                  onClick={() => setIsRelatedDrawerOpen(true)}
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-text-secondary outline-none transition-colors hover:bg-surface-3 hover:text-text-primary"
+                >
+                  <RelatedIcon />
+                  Related photos
+                </Menu.Item>
                 <Menu.Separator className="my-1 border-t border-surface-3" />
                 <Menu.Item
                   onClick={() => setIsAuthorDialogOpen(true)}
@@ -183,6 +188,12 @@ export const ImageCard = ({ url, hexValues, userName, photoUrl, index }: ImageCa
           </Menu.Portal>
         </Menu.Root>
       </div>
+
+      <RelatedPhotosDrawer
+        photoId={id}
+        open={isRelatedDrawerOpen}
+        onOpenChange={setIsRelatedDrawerOpen}
+      />
 
       <ColorAdjustDialog
         hexValues={hexValues}

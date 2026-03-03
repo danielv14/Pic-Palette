@@ -62,6 +62,41 @@ export const getTopicPhotos = createServerFn({ method: "GET" })
     return getPhotosWithPalettes(photos.response.results);
   });
 
+export const getPhoto = createServerFn({ method: "GET" })
+  .inputValidator((photoId: string) => photoId)
+  .handler(async ({ data: photoId }): Promise<ImageWithPalette | null> => {
+    const response = await unsplashAPI.photos.get({ photoId });
+    if (response.errors || !response.response) return null;
+    const results = await getPhotosWithPalettes([response.response as any]);
+    return results[0] ?? null;
+  });
+
+export const getRandomPhotos = createServerFn({ method: "GET" }).handler(
+  async (): Promise<ImageWithPalette[]> => {
+    const response = await unsplashAPI.photos.getRandom({
+      count: 20,
+      orientation: "squarish",
+    });
+    if (response.errors || !response.response) return [];
+    const photos = Array.isArray(response.response)
+      ? response.response
+      : [response.response];
+    return getPhotosWithPalettes(photos as any);
+  }
+);
+
+export const getRelatedPhotos = createServerFn({ method: "GET" })
+  .inputValidator((photoId: string) => photoId)
+  .handler(async ({ data: photoId }): Promise<ImageWithPalette[]> => {
+    const response = await fetch(
+      `https://api.unsplash.com/photos/${photoId}/related`,
+      { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } }
+    );
+    if (!response.ok) return [];
+    const json = await response.json();
+    return getPhotosWithPalettes(json.results ?? []);
+  });
+
 export const listPhotosByType = createServerFn({ method: "GET" })
   .inputValidator((params: ImageListOptions) => params)
   .handler(async ({ data }): Promise<ImageWithPalette[]> => {

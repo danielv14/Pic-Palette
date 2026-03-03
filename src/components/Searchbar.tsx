@@ -17,7 +17,7 @@ export const Searchbar = () => {
         <input
           required
           type="text"
-          className="w-full rounded-full bg-white py-3 pr-4 pl-12 text-gray-900 shadow-lg shadow-brand-500/10 placeholder:text-gray-400 focus:ring-2 focus:ring-brand-400 focus:outline-none"
+          className="w-full rounded-2xl border border-white/10 bg-white/5 py-3 pr-4 pl-12 text-text-primary backdrop-blur-md placeholder:text-text-muted focus:ring-2 focus:ring-brand-400 focus:outline-none"
           onChange={(event) => setQuery(event.target.value)}
           value={query}
           placeholder="Search for kittens, dogs or whatever"
@@ -29,7 +29,7 @@ export const Searchbar = () => {
           viewBox="0 0 20 20"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="pointer-events-none absolute inset-y-0 left-3 h-full w-5 text-gray-400"
+          className="pointer-events-none absolute inset-y-0 left-3 h-full w-5 text-text-muted"
         >
           <path
             strokeLinecap="round"

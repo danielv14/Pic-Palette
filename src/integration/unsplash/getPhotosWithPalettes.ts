@@ -9,7 +9,9 @@ export const getPhotosWithPalettes = async (
     images.map(async (image) => {
       const hexValues = await getHexValues(image.urls.thumb);
       return {
+        id: image.id,
         url: image.urls.regular,
+        smallUrl: image.urls.small,
         hexValues,
         userName: image.user.username,
         thumbnail: image.urls.thumb,

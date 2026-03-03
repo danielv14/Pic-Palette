@@ -50,7 +50,8 @@ const SearchPage = () => {
       <ImageGrid>
         {images.map((image, index) => (
           <ImageCard
-            key={image.url}
+            key={image.id}
+            id={image.id}
             url={image.url}
             hexValues={image.hexValues}
             userName={image.userName}

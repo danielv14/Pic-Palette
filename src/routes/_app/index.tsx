@@ -1,27 +1,40 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { ImageCard } from "~/components/ImageCard";
+import { ImageGrid } from "~/components/ImageGrid";
+import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
+import { latestPhotosQueryOptions } from "~/integration/unsplash";
 
-const HomePage = () => (
-  <div className="flex flex-col items-center justify-center py-32 text-text-muted">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke="currentColor"
-      className="mb-6 h-20 w-20 text-brand-500 opacity-50"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z"
-      />
-    </svg>
-    <p className="font-display text-xl font-semibold">
-      Search for images above to get started
-    </p>
-  </div>
-);
+const HomePage = () => {
+  const { data: photos = [] } = useQuery(latestPhotosQueryOptions());
+
+  if (photos.length === 0) return <ImageGridSkeleton />;
+
+  return (
+    <>
+      <h2 className="bg-gradient-to-br from-brand-300 to-brand-600 bg-clip-text p-2 text-center text-2xl font-extrabold text-transparent font-display md:p-4 md:text-start md:text-3xl">
+        Latest photos
+      </h2>
+      <ImageGrid>
+        {photos.map((photo, index) => (
+          <ImageCard
+            key={photo.id}
+            id={photo.id}
+            url={photo.url}
+            hexValues={photo.hexValues}
+            userName={photo.userName}
+            photoUrl={photo.photoUrl}
+            index={index}
+          />
+        ))}
+      </ImageGrid>
+    </>
+  );
+};
 
 export const Route = createFileRoute("/_app/")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(latestPhotosQueryOptions()),
+  pendingComponent: ImageGridSkeleton,
   component: HomePage,
 });

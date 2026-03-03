@@ -29,7 +29,7 @@ export const Tooltip = ({ content, children }: TooltipProps) => {
               top: position.y - 8,
               transform: "translate(-50%, -100%)",
             }}
-            className="pointer-events-none z-50 rounded-lg bg-surface-3 px-2 py-1 text-xs whitespace-nowrap text-text-primary shadow-md"
+            className="pointer-events-none z-50 rounded-lg bg-surface-3 px-2 py-1 font-mono text-xs whitespace-nowrap text-text-primary shadow-md"
           >
             {content}
           </div>,

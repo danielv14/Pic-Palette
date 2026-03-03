@@ -2,7 +2,9 @@ import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 import type { OrderBy } from "unsplash-js";
 import type { UnsplashColor } from "~/schemas/ImageSearchParams";
 import { AMOUNT_OF_IMAGES_TO_FETCH } from "./config";
-import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos } from "./unsplash";
+import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos } from "./unsplash";
+
+const FIVE_MINUTES = 1000 * 60 * 5;
 
 const getNextPageParam = (
   lastPage: unknown[],
@@ -28,12 +30,14 @@ export const searchPhotosInfiniteOptions = (
       }),
     initialPageParam: 1,
     getNextPageParam,
+    staleTime: FIVE_MINUTES,
   });
 
 export const listTopicsOptions = () =>
   queryOptions({
     queryKey: ["topics"],
     queryFn: () => listTopics(),
+    staleTime: Infinity,
   });
 
 export const topicPhotosInfiniteOptions = (topicSlug: string) =>
@@ -45,6 +49,35 @@ export const topicPhotosInfiniteOptions = (topicSlug: string) =>
       }),
     initialPageParam: 1,
     getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const randomPhotosQueryOptions = () =>
+  queryOptions({
+    queryKey: ["photos", "random"],
+    queryFn: () => getRandomPhotos(),
+    staleTime: FIVE_MINUTES,
+  });
+
+export const latestPhotosQueryOptions = () =>
+  queryOptions({
+    queryKey: ["photos", "latest"],
+    queryFn: () => listPhotosByType({ data: { type: "latest", page: 1, perPage: 12 } }),
+    staleTime: FIVE_MINUTES,
+  });
+
+export const photoQueryOptions = (photoId: string) =>
+  queryOptions({
+    queryKey: ["photos", "single", photoId],
+    queryFn: () => getPhoto({ data: photoId }),
+    staleTime: Infinity,
+  });
+
+export const relatedPhotosQueryOptions = (photoId: string) =>
+  queryOptions({
+    queryKey: ["photos", "related", photoId],
+    queryFn: () => getRelatedPhotos({ data: photoId }),
+    staleTime: Infinity,
   });
 
 export const listPhotosInfiniteOptions = (type: OrderBy) =>
@@ -56,4 +89,5 @@ export const listPhotosInfiniteOptions = (type: OrderBy) =>
       }),
     initialPageParam: 1,
     getNextPageParam,
+    staleTime: FIVE_MINUTES,
   });

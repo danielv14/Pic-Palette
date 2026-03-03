@@ -32,7 +32,7 @@ export const Route = createRootRouteWithContext<{
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Outfit:wght@600;700;800&display=swap",
       },
     ],
   }),
@@ -54,7 +54,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="min-h-screen bg-surface-0 font-body text-text-primary">
-        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-brand-900)_0%,_transparent_60%)] opacity-40" />
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-brand-900)_0%,_transparent_50%)] opacity-30" />
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--color-brand-900)_0%,_transparent_50%)] opacity-15" />
+        <div className="noise-overlay" />
         <div className="relative">{children}</div>
         <ReactQueryDevtools buttonPosition="bottom-right" />
         <Scripts />
