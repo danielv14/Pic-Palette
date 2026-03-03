@@ -13,6 +13,7 @@ export const getPhotosWithPalettes = async (
         hexValues,
         userName: image.user.username,
         thumbnail: image.urls.thumb,
+        photoUrl: image.links.html,
       };
     })
   );

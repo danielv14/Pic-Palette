@@ -54,6 +54,7 @@ const SearchPage = () => {
             url={image.url}
             hexValues={image.hexValues}
             userName={image.userName}
+            photoUrl={image.photoUrl}
             index={index}
           />
         ))}

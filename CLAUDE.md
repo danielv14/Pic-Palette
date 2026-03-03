@@ -7,9 +7,9 @@ Photo browsing app that fetches images from Unsplash and extracts color palettes
 ## Commands
 
 ```bash
-yarn dev    # Dev server on http://localhost:3000
-yarn build  # Production build
-yarn start  # Run production server (node .output/server/index.mjs)
+npm run dev    # Dev server on http://localhost:3000
+npm run build  # Production build
+npm start      # Run production server (node .output/server/index.mjs)
 ```
 
 ## Environment

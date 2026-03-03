@@ -3,4 +3,5 @@ export interface ImageWithPalette {
   hexValues: string[];
   url: string;
   thumbnail: string;
+  photoUrl: string;
 }
