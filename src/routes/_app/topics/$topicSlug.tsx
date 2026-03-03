@@ -1,51 +1,42 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
-import { ColorFilter } from "~/components/ColorFilter";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
 import { LoadMoreButton } from "~/components/LoadMoreButton";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
-import { searchPhotosInfiniteOptions } from "~/integration/unsplash";
-import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams";
+import { topicPhotosInfiniteOptions } from "~/integration/unsplash";
 
-const searchValidateSearch = z.object({
-  query: z.string().default(""),
-  color: z.enum(UNSPLASH_COLORS).optional(),
+const validateSearch = z.object({
+  title: z.string().default(""),
 });
 
-const SearchPage = () => {
-  const { query, color } = useSearch({ from: "/_app/search" });
-  const navigate = useNavigate();
+const TopicPhotosPage = () => {
+  const { topicSlug } = Route.useParams();
+  const { title } = useSearch({ from: "/_app/topics/$topicSlug" });
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteQuery(searchPhotosInfiniteOptions(query, color));
+    useInfiniteQuery(topicPhotosInfiniteOptions(topicSlug));
 
   const images = data?.pages.flat() ?? [];
 
-  const handleColorChange = (newColor: UnsplashColor | undefined) => {
-    navigate({
-      to: "/search",
-      search: { query, ...(newColor && { color: newColor }) },
-    });
-  };
-
   if (images.length === 0) {
     if (isFetching) return <ImageGridSkeleton />;
-    return (
-      <NoImagesAlert>Found no images. Search for something else.</NoImagesAlert>
-    );
+    return <NoImagesAlert>Found no images for this topic.</NoImagesAlert>;
   }
 
   return (
     <>
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 p-2 md:p-4">
         <h2 className="bg-gradient-to-br from-brand-300 to-brand-600 bg-clip-text text-2xl font-extrabold text-transparent font-display md:text-3xl">
-          Images of &quot;
-          <span className="italic">{query}</span>
-          &quot;
+          {title || topicSlug}
         </h2>
-        <ColorFilter value={color} onChange={handleColorChange} />
+        <Link
+          to="/topics"
+          className="text-sm font-medium text-brand-400 transition-colors hover:text-brand-300 hover:underline"
+        >
+          All topics
+        </Link>
       </div>
       <ImageGrid>
         {images.map((image, index) => (
@@ -66,13 +57,13 @@ const SearchPage = () => {
   );
 };
 
-export const Route = createFileRoute("/_app/search")({
-  validateSearch: searchValidateSearch,
+export const Route = createFileRoute("/_app/topics/$topicSlug")({
+  validateSearch,
   loaderDeps: ({ search }) => search,
-  loader: ({ context, deps }) =>
+  loader: ({ context, params }) =>
     context.queryClient.ensureInfiniteQueryData(
-      searchPhotosInfiniteOptions(deps.query, deps.color)
+      topicPhotosInfiniteOptions(params.topicSlug)
     ),
   pendingComponent: ImageGridSkeleton,
-  component: SearchPage,
+  component: TopicPhotosPage,
 });

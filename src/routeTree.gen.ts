@@ -13,6 +13,8 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppListRouteImport } from './routes/_app/list'
+import { Route as AppTopicsIndexRouteImport } from './routes/_app/topics/index'
+import { Route as AppTopicsTopicSlugRouteImport } from './routes/_app/topics/$topicSlug'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -33,16 +35,30 @@ const AppListRoute = AppListRouteImport.update({
   path: '/list',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTopicsIndexRoute = AppTopicsIndexRouteImport.update({
+  id: '/topics/',
+  path: '/topics/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTopicsTopicSlugRoute = AppTopicsTopicSlugRouteImport.update({
+  id: '/topics/$topicSlug',
+  path: '/topics/$topicSlug',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
+  '/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
+  '/topics/': typeof AppTopicsIndexRoute
 }
 export interface FileRoutesByTo {
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
   '/': typeof AppIndexRoute
+  '/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
+  '/topics': typeof AppTopicsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +66,22 @@ export interface FileRoutesById {
   '/_app/list': typeof AppListRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
+  '/_app/topics/': typeof AppTopicsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/list' | '/search'
+  fullPaths: '/' | '/list' | '/search' | '/topics/$topicSlug' | '/topics/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/list' | '/search' | '/'
-  id: '__root__' | '/_app' | '/_app/list' | '/_app/search' | '/_app/'
+  to: '/list' | '/search' | '/' | '/topics/$topicSlug' | '/topics'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/list'
+    | '/_app/search'
+    | '/_app/'
+    | '/_app/topics/$topicSlug'
+    | '/_app/topics/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,6 +118,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppListRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/topics/': {
+      id: '/_app/topics/'
+      path: '/topics'
+      fullPath: '/topics/'
+      preLoaderRoute: typeof AppTopicsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/topics/$topicSlug': {
+      id: '/_app/topics/$topicSlug'
+      path: '/topics/$topicSlug'
+      fullPath: '/topics/$topicSlug'
+      preLoaderRoute: typeof AppTopicsTopicSlugRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -100,12 +139,16 @@ interface AppRouteChildren {
   AppListRoute: typeof AppListRoute
   AppSearchRoute: typeof AppSearchRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppTopicsTopicSlugRoute: typeof AppTopicsTopicSlugRoute
+  AppTopicsIndexRoute: typeof AppTopicsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppListRoute: AppListRoute,
   AppSearchRoute: AppSearchRoute,
   AppIndexRoute: AppIndexRoute,
+  AppTopicsTopicSlugRoute: AppTopicsTopicSlugRoute,
+  AppTopicsIndexRoute: AppTopicsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { sleep } from "~/utils/sleep";
+import { Tooltip } from "~/components/Tooltip";
 
 interface ImageCardProps {
   url: string;
@@ -44,6 +45,7 @@ const CopySuccessIcon = () => (
 
 export const ImageCard = ({ url, hexValues, userName, index }: ImageCardProps) => {
   const [hasCopied, setHasCopied] = useState(false);
+  const [copiedHex, setCopiedHex] = useState<string | null>(null);
 
   const copyToClipboard = async () => {
     try {
@@ -56,46 +58,63 @@ export const ImageCard = ({ url, hexValues, userName, index }: ImageCardProps) =
     }
   };
 
+  const copyHex = async (hex: string) => {
+    try {
+      await navigator.clipboard.writeText(hex);
+      setCopiedHex(hex);
+      await sleep(1000);
+      setCopiedHex(null);
+    } catch {
+      // clipboard not available
+    }
+  };
+
   return (
     <div
-      className="group animate-fade-in-up flex h-full w-full flex-col items-center rounded-2xl bg-surface-2"
+      className="group animate-fade-in-up relative aspect-square w-full overflow-hidden rounded-2xl"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      <div className="w-full overflow-hidden rounded-2xl rounded-b-none">
-        <img
-          src={url}
-          alt={`Photo by ${userName}`}
-          className="aspect-square w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
+      <img
+        src={url}
+        alt={`Photo by ${userName}`}
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+        loading="lazy"
+      />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 backdrop-blur-md [mask-image:linear-gradient(to_bottom,transparent,black_40%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-4">
+        <div className="flex w-full items-center justify-between">
+          <div className="flex flex-row -space-x-2">
+            {hexValues.map((hex) => (
+              <Tooltip key={`hex-${hex}`} content={copiedHex === hex ? "Copied!" : hex}>
+                <button
+                  onClick={() => copyHex(hex)}
+                  style={{ background: hex }}
+                  className="h-8 w-8 cursor-pointer rounded-full transition-transform hover:z-10 hover:scale-125"
+                />
+              </Tooltip>
+            ))}
+          </div>
+          <button
+            onClick={copyToClipboard}
+            className="flex items-center gap-1 rounded-full px-2 py-0.5 text-xs text-white/60 transition-colors hover:text-white"
+          >
+            {hasCopied ? <CopySuccessIcon /> : <CopyIcon />}
+            {hasCopied ? "Copied" : "Copy"}
+          </button>
+        </div>
+        <p className="text-[10px] text-white/50">
+          By {userName} on{" "}
+          <a
+            href="https://unsplash.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            unsplash.com
+          </a>
+        </p>
       </div>
-      <div className="mt-4 flex flex-row -space-x-2">
-        {hexValues.map((hex) => (
-          <div
-            key={`hex-${hex}`}
-            style={{ background: hex }}
-            className="h-10 w-10 rounded-full ring-2 ring-surface-1 transition-transform hover:scale-125 hover:z-10"
-          />
-        ))}
-      </div>
-      <button
-        onClick={copyToClipboard}
-        className="mt-2 flex items-center gap-1 rounded-full px-3 py-1 text-sm text-text-secondary transition-colors hover:text-text-primary"
-      >
-        {hasCopied ? <CopySuccessIcon /> : <CopyIcon />}
-        {hasCopied ? "Copied" : "Copy colors"}
-      </button>
-      <p className="p-2 text-xs text-text-muted">
-        By: {userName} on{" "}
-        <a
-          href="https://unsplash.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          unsplash.com
-        </a>
-      </p>
     </div>
   );
 };

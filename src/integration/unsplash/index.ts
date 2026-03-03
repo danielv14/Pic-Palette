@@ -1,5 +1,7 @@
-export { searchPhotosByQuery, listPhotosByType } from "./unsplash";
+export { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos } from "./unsplash";
 export {
   searchPhotosInfiniteOptions,
   listPhotosInfiniteOptions,
+  listTopicsOptions,
+  topicPhotosInfiniteOptions,
 } from "./queries";

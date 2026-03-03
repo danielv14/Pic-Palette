@@ -30,7 +30,13 @@ const AppLayout = () => (
       >
         latest
       </Link>{" "}
-      images
+      images, or explore{" "}
+      <Link
+        to="/topics"
+        className="text-brand-400 transition-colors hover:text-brand-300 hover:underline hover:decoration-brand-400"
+      >
+        topics
+      </Link>
     </p>
     <Outlet />
   </div>
