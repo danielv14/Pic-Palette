@@ -13,7 +13,7 @@ UNSPLASH_ACCESS_KEY=your_access_key
 Then run the development server:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
@@ -31,9 +31,9 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 ## Scripts
 
 ```bash
-yarn dev    # Start development server on port 3000
-yarn build  # Build for production
-yarn start  # Run production server
+npm run dev    # Start development server on port 3000
+npm run build  # Build for production
+npm start      # Run production server
 ```
 
 ## Deploy on Vercel
