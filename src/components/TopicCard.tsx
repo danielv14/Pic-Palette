@@ -14,7 +14,8 @@ export const TopicCard = ({ topic }: { topic: Topic }) => (
         alt={topic.title}
         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 backdrop-blur-md [mask-image:linear-gradient(to_bottom,transparent,black_40%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
       <div className="absolute bottom-0 p-4">
         <h3 className="text-lg font-bold leading-tight text-white drop-shadow-md">
           {topic.title}
