@@ -35,6 +35,8 @@ const ListPage = () => {
             key={image.id}
             id={image.id}
             url={image.url}
+            smallUrl={image.smallUrl}
+            thumbnail={image.thumbnail}
             hexValues={image.hexValues}
             userName={image.userName}
             photoUrl={image.photoUrl}

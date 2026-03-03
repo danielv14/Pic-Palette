@@ -13,6 +13,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppListRouteImport } from './routes/_app/list'
+import { Route as AppFavoritesRouteImport } from './routes/_app/favorites'
 import { Route as AppTopicsIndexRouteImport } from './routes/_app/topics/index'
 import { Route as AppTopicsTopicSlugRouteImport } from './routes/_app/topics/$topicSlug'
 import { Route as AppPhotosPhotoIdRouteImport } from './routes/_app/photos/$photoId'
@@ -36,6 +37,11 @@ const AppListRoute = AppListRouteImport.update({
   path: '/list',
   getParentRoute: () => AppRoute,
 } as any)
+const AppFavoritesRoute = AppFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTopicsIndexRoute = AppTopicsIndexRouteImport.update({
   id: '/topics/',
   path: '/topics/',
@@ -54,6 +60,7 @@ const AppPhotosPhotoIdRoute = AppPhotosPhotoIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/favorites': typeof AppFavoritesRoute
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
   '/photos/$photoId': typeof AppPhotosPhotoIdRoute
@@ -61,6 +68,7 @@ export interface FileRoutesByFullPath {
   '/topics/': typeof AppTopicsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/favorites': typeof AppFavoritesRoute
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
   '/': typeof AppIndexRoute
@@ -71,6 +79,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/_app/favorites': typeof AppFavoritesRoute
   '/_app/list': typeof AppListRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/': typeof AppIndexRoute
@@ -82,6 +91,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/favorites'
     | '/list'
     | '/search'
     | '/photos/$photoId'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/topics/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/favorites'
     | '/list'
     | '/search'
     | '/'
@@ -98,6 +109,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/_app/favorites'
     | '/_app/list'
     | '/_app/search'
     | '/_app/'
@@ -140,6 +152,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppListRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/favorites': {
+      id: '/_app/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof AppFavoritesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/topics/': {
       id: '/_app/topics/'
       path: '/topics'
@@ -165,6 +184,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppFavoritesRoute: typeof AppFavoritesRoute
   AppListRoute: typeof AppListRoute
   AppSearchRoute: typeof AppSearchRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -174,6 +194,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppFavoritesRoute: AppFavoritesRoute,
   AppListRoute: AppListRoute,
   AppSearchRoute: AppSearchRoute,
   AppIndexRoute: AppIndexRoute,

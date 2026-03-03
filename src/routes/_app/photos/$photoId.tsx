@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useState, useRef } from "react";
 import { ExternalLinkIcon } from "~/components/Icons";
-import { ImageCard } from "~/components/ImageCard";
+import { HeartIcon, ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { PaletteAdjustControls } from "~/components/PaletteAdjustControls";
 import { PhotoPageSkeleton } from "~/components/PhotoPageSkeleton";
+import { useFavorites } from "~/hooks/useFavorites";
 import { photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
 import { UTM } from "~/utils/utm";
 
@@ -26,18 +28,42 @@ const PhotoPage = () => {
   const router = useRouter();
   const { data: photo } = useQuery(photoQueryOptions(photoId));
   const { data: related = [] } = useQuery(relatedPhotosQueryOptions(photoId));
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const [isPopping, setIsPopping] = useState(false);
+  const popTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   if (!photo) return null;
 
+  const favorited = isFavorite(photo.id);
+
+  const handleToggleFavorite = () => {
+    toggleFavorite(photo);
+    if (!favorited) {
+      if (popTimerRef.current) clearTimeout(popTimerRef.current);
+      setIsPopping(true);
+      popTimerRef.current = setTimeout(() => setIsPopping(false), 450);
+    }
+  };
+
   return (
     <div className="p-2 md:p-4">
-      <button
-        onClick={() => router.history.back()}
-        className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-text-muted backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
-      >
-        <BackIcon />
-        Back
-      </button>
+      <div className="mb-6 flex items-center gap-3">
+        <button
+          onClick={() => router.history.back()}
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-text-muted backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
+        >
+          <BackIcon />
+          Back
+        </button>
+        <button
+          onClick={handleToggleFavorite}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-md transition-colors duration-200 hover:bg-white/10"
+          style={{ color: favorited ? "var(--color-brand-400)" : "var(--color-text-muted)" }}
+        >
+          <HeartIcon filled={favorited} className={`w-3.5 shrink-0${isPopping ? " animate-heart-pop" : ""}`} />
+          {favorited ? "Favorited" : "Add to favorites"}
+        </button>
+      </div>
 
       <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div className="flex flex-col gap-4">
@@ -78,6 +104,8 @@ const PhotoPage = () => {
                 key={image.id}
                 id={image.id}
                 url={image.url}
+                smallUrl={image.smallUrl}
+                thumbnail={image.thumbnail}
                 hexValues={image.hexValues}
                 userName={image.userName}
                 photoUrl={image.photoUrl}

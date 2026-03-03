@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog, Menu } from "@base-ui/react";
 import { Link } from "@tanstack/react-router";
 import { sleep } from "~/utils/sleep";
@@ -7,10 +7,13 @@ import { CloseIcon, ExternalLinkIcon } from "~/components/Icons";
 import { Tooltip } from "~/components/Tooltip";
 import { ColorAdjustDialog } from "~/components/ColorAdjustDialog";
 import { RelatedPhotosDrawer } from "~/components/RelatedPhotosDrawer";
+import { useFavorites } from "~/hooks/useFavorites";
 
 interface ImageCardProps {
   id: string;
   url: string;
+  smallUrl: string;
+  thumbnail: string;
   hexValues: string[];
   userName: string;
   photoUrl: string;
@@ -89,12 +92,42 @@ const RelatedIcon = () => (
   </svg>
 );
 
+export const HeartIcon = ({ filled, className = "w-4 shrink-0" }: { filled: boolean; className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    className={className}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+    />
+  </svg>
+);
 
-export const ImageCard = ({ id, url, hexValues, userName, photoUrl, index }: ImageCardProps) => {
+
+export const ImageCard = ({ id, url, smallUrl, thumbnail, hexValues, userName, photoUrl, index }: ImageCardProps) => {
   const [copiedHex, setCopiedHex] = useState<string | null>(null);
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
   const [isRelatedDrawerOpen, setIsRelatedDrawerOpen] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavorites();
+  const favorited = isFavorite(id);
+  const [isPopping, setIsPopping] = useState(false);
+  const popTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleToggleFavorite = () => {
+    toggleFavorite({ id, url, smallUrl, thumbnail, hexValues, userName, photoUrl });
+    if (!favorited) {
+      if (popTimerRef.current) clearTimeout(popTimerRef.current);
+      setIsPopping(true);
+      popTimerRef.current = setTimeout(() => setIsPopping(false), 450);
+    }
+  };
 
   const copyAllColors = async () => {
     try {
@@ -146,6 +179,14 @@ export const ImageCard = ({ id, url, hexValues, userName, photoUrl, index }: Ima
             </Tooltip>
           ))}
         </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleToggleFavorite}
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10"
+            style={{ color: favorited ? "var(--color-brand-400)" : "rgba(255,255,255,0.6)" }}
+          >
+            <HeartIcon filled={favorited} className={`w-4 shrink-0${isPopping ? " animate-heart-pop" : ""}`} />
+          </button>
         <Menu.Root>
           <Menu.Trigger className="flex cursor-pointer items-center gap-1 rounded-full px-2 py-0.5 text-xs text-white/60 transition-all duration-200 hover:bg-white/10 hover:text-white">
             <AdjustIcon />
@@ -187,6 +228,7 @@ export const ImageCard = ({ id, url, hexValues, userName, photoUrl, index }: Ima
             </Menu.Positioner>
           </Menu.Portal>
         </Menu.Root>
+        </div>
       </div>
 
       <RelatedPhotosDrawer

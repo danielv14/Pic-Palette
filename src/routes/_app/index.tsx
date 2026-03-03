@@ -21,6 +21,8 @@ const HomePage = () => {
             key={photo.id}
             id={photo.id}
             url={photo.url}
+            smallUrl={photo.smallUrl}
+            thumbnail={photo.thumbnail}
             hexValues={photo.hexValues}
             userName={photo.userName}
             photoUrl={photo.photoUrl}
