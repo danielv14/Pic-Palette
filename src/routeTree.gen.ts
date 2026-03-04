@@ -17,6 +17,7 @@ import { Route as AppFavoritesRouteImport } from './routes/_app/favorites'
 import { Route as AppTopicsIndexRouteImport } from './routes/_app/topics/index'
 import { Route as AppTopicsTopicSlugRouteImport } from './routes/_app/topics/$topicSlug'
 import { Route as AppPhotosPhotoIdRouteImport } from './routes/_app/photos/$photoId'
+import { Route as AppCollectionsCollectionIdRouteImport } from './routes/_app/collections/$collectionId'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -57,12 +58,19 @@ const AppPhotosPhotoIdRoute = AppPhotosPhotoIdRouteImport.update({
   path: '/photos/$photoId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCollectionsCollectionIdRoute =
+  AppCollectionsCollectionIdRouteImport.update({
+    id: '/collections/$collectionId',
+    path: '/collections/$collectionId',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/favorites': typeof AppFavoritesRoute
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
+  '/collections/$collectionId': typeof AppCollectionsCollectionIdRoute
   '/photos/$photoId': typeof AppPhotosPhotoIdRoute
   '/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
   '/topics/': typeof AppTopicsIndexRoute
@@ -72,6 +80,7 @@ export interface FileRoutesByTo {
   '/list': typeof AppListRoute
   '/search': typeof AppSearchRoute
   '/': typeof AppIndexRoute
+  '/collections/$collectionId': typeof AppCollectionsCollectionIdRoute
   '/photos/$photoId': typeof AppPhotosPhotoIdRoute
   '/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
   '/topics': typeof AppTopicsIndexRoute
@@ -83,6 +92,7 @@ export interface FileRoutesById {
   '/_app/list': typeof AppListRoute
   '/_app/search': typeof AppSearchRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/collections/$collectionId': typeof AppCollectionsCollectionIdRoute
   '/_app/photos/$photoId': typeof AppPhotosPhotoIdRoute
   '/_app/topics/$topicSlug': typeof AppTopicsTopicSlugRoute
   '/_app/topics/': typeof AppTopicsIndexRoute
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/list'
     | '/search'
+    | '/collections/$collectionId'
     | '/photos/$photoId'
     | '/topics/$topicSlug'
     | '/topics/'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
     | '/list'
     | '/search'
     | '/'
+    | '/collections/$collectionId'
     | '/photos/$photoId'
     | '/topics/$topicSlug'
     | '/topics'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
     | '/_app/list'
     | '/_app/search'
     | '/_app/'
+    | '/_app/collections/$collectionId'
     | '/_app/photos/$photoId'
     | '/_app/topics/$topicSlug'
     | '/_app/topics/'
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPhotosPhotoIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/collections/$collectionId': {
+      id: '/_app/collections/$collectionId'
+      path: '/collections/$collectionId'
+      fullPath: '/collections/$collectionId'
+      preLoaderRoute: typeof AppCollectionsCollectionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -188,6 +208,7 @@ interface AppRouteChildren {
   AppListRoute: typeof AppListRoute
   AppSearchRoute: typeof AppSearchRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppCollectionsCollectionIdRoute: typeof AppCollectionsCollectionIdRoute
   AppPhotosPhotoIdRoute: typeof AppPhotosPhotoIdRoute
   AppTopicsTopicSlugRoute: typeof AppTopicsTopicSlugRoute
   AppTopicsIndexRoute: typeof AppTopicsIndexRoute
@@ -198,6 +219,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppListRoute: AppListRoute,
   AppSearchRoute: AppSearchRoute,
   AppIndexRoute: AppIndexRoute,
+  AppCollectionsCollectionIdRoute: AppCollectionsCollectionIdRoute,
   AppPhotosPhotoIdRoute: AppPhotosPhotoIdRoute,
   AppTopicsTopicSlugRoute: AppTopicsTopicSlugRoute,
   AppTopicsIndexRoute: AppTopicsIndexRoute,

@@ -3,6 +3,7 @@ import * as Unsplash from "unsplash-js";
 import type { ImageListOptions } from "~/schemas/ImageListParams";
 import type { ImageSearchOptions } from "~/schemas/ImageSearchParams";
 import type { TopicPhotosOptions } from "~/schemas/TopicPhotosParams";
+import type { Collection } from "~/types/Collection";
 import type { ImageWithPalette } from "~/types/Image";
 import type { Topic } from "~/types/Topic";
 import { ACCESS_KEY } from "./config";
@@ -95,6 +96,32 @@ export const getRelatedPhotos = createServerFn({ method: "GET" })
     if (!response.ok) return [];
     const json = await response.json();
     return getPhotosWithPalettes(json.results ?? []);
+  });
+
+export const searchCollectionsByQuery = createServerFn({ method: "GET" })
+  .inputValidator((params: { query: string; page?: number; perPage?: number }) => params)
+  .handler(async ({ data }): Promise<Collection[]> => {
+    const { query, page = 1, perPage } = data;
+    const response = await unsplashAPI.search.getCollections({ query, page, perPage });
+    if (response.errors || !response.response) return [];
+    return response.response.results.map((collection) => ({
+      id: collection.id,
+      title: collection.title,
+      description: collection.description,
+      totalPhotos: collection.total_photos,
+      coverUrl: collection.cover_photo?.urls.regular ?? "",
+      previewUrls: collection.preview_photos?.map((photo) => photo.urls.thumb) ?? [],
+      userName: collection.user.name,
+    }));
+  });
+
+export const getCollectionPhotos = createServerFn({ method: "GET" })
+  .inputValidator((params: { collectionId: string; page?: number; perPage?: number }) => params)
+  .handler(async ({ data }): Promise<ImageWithPalette[]> => {
+    const { collectionId, page = 1, perPage } = data;
+    const response = await unsplashAPI.collections.getPhotos({ collectionId, page, perPage });
+    if (response.errors || !response.response) return [];
+    return getPhotosWithPalettes(response.response.results);
   });
 
 export const listPhotosByType = createServerFn({ method: "GET" })

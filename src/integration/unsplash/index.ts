@@ -1,4 +1,4 @@
-export { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos } from "./unsplash";
+export { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos, searchCollectionsByQuery, getCollectionPhotos } from "./unsplash";
 export {
   searchPhotosInfiniteOptions,
   listPhotosInfiniteOptions,
@@ -8,4 +8,6 @@ export {
   photoQueryOptions,
   randomPhotosQueryOptions,
   latestPhotosQueryOptions,
+  searchCollectionsInfiniteOptions,
+  collectionPhotosInfiniteOptions,
 } from "./queries";

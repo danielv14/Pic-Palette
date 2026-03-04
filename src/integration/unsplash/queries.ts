@@ -2,7 +2,7 @@ import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 import type { OrderBy } from "unsplash-js";
 import type { UnsplashColor } from "~/schemas/ImageSearchParams";
 import { AMOUNT_OF_IMAGES_TO_FETCH } from "./config";
-import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos } from "./unsplash";
+import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos, searchCollectionsByQuery, getCollectionPhotos } from "./unsplash";
 
 const FIVE_MINUTES = 1000 * 60 * 5;
 
@@ -78,6 +78,30 @@ export const relatedPhotosQueryOptions = (photoId: string) =>
     queryKey: ["photos", "related", photoId],
     queryFn: () => getRelatedPhotos({ data: photoId }),
     staleTime: Infinity,
+  });
+
+export const searchCollectionsInfiniteOptions = (query: string) =>
+  infiniteQueryOptions({
+    queryKey: ["collections", "search", "infinite", query],
+    queryFn: ({ pageParam }) =>
+      searchCollectionsByQuery({
+        data: { query, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
+      }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const collectionPhotosInfiniteOptions = (collectionId: string) =>
+  infiniteQueryOptions({
+    queryKey: ["photos", "collection", "infinite", collectionId],
+    queryFn: ({ pageParam }) =>
+      getCollectionPhotos({
+        data: { collectionId, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
+      }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
   });
 
 export const listPhotosInfiniteOptions = (type: OrderBy) =>
