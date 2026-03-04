@@ -16,13 +16,6 @@ const AppLayout = () => (
     <div className="mt-4 mb-8 flex flex-wrap items-center justify-center gap-2">
       <Link
         to="/list"
-        search={{ type: OrderBy.POPULAR }}
-        className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
-      >
-        Popular
-      </Link>
-      <Link
-        to="/list"
         search={{ type: OrderBy.LATEST }}
         className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-md transition-all duration-200 hover:bg-white/10 hover:text-text-primary"
       >

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
@@ -30,6 +30,15 @@ const HomePage = () => {
           />
         ))}
       </ImageGrid>
+      <div className="mt-6 mb-6 flex justify-center">
+        <Link
+          to="/list"
+          search={{ type: "latest" }}
+          className="rounded-full border border-brand-500/40 bg-brand-500/10 px-8 py-3 font-body text-sm font-medium text-brand-300 backdrop-blur-sm transition-all duration-200 hover:bg-brand-500/20 hover:shadow-lg hover:shadow-brand-500/15"
+        >
+          See all latest photos
+        </Link>
+      </div>
     </>
   );
 };

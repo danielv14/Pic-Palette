@@ -10,13 +10,16 @@ import { NoImagesAlert } from "~/components/NoImagesAlert";
 import { listPhotosInfiniteOptions } from "~/integration/unsplash";
 
 const listValidateSearch = z.object({
-  type: z.nativeEnum(OrderBy).default(OrderBy.POPULAR),
+  type: z.nativeEnum(OrderBy).default(OrderBy.LATEST),
 });
+
+const getListQueryOptions = (type: OrderBy) => listPhotosInfiniteOptions(type);
 
 const ListPage = () => {
   const { type } = useSearch({ from: "/_app/list" });
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteQuery(listPhotosInfiniteOptions(type));
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+    getListQueryOptions(type)
+  );
 
   const images = data?.pages.flat() ?? [];
 
@@ -56,9 +59,7 @@ export const Route = createFileRoute("/_app/list")({
   validateSearch: listValidateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) =>
-    context.queryClient.ensureInfiniteQueryData(
-      listPhotosInfiniteOptions(deps.type)
-    ),
+    context.queryClient.ensureInfiniteQueryData(getListQueryOptions(deps.type)),
   pendingComponent: ImageGridSkeleton,
   component: ListPage,
 });
