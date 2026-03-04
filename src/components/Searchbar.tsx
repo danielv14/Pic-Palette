@@ -30,6 +30,7 @@ export const Searchbar = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <button type="submit" className="sr-only" aria-hidden>Search</button>
       <div className="flex items-center rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md focus-within:ring-2 focus-within:ring-brand-400 transition-shadow">
         <input
           required
