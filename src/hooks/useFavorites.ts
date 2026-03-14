@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import type { ImageWithPalette } from "~/types/Image";
 
 const STORAGE_KEY = "pic-palette-favorites";
@@ -60,8 +60,13 @@ export const useFavorites = () => {
     store.getServerSnapshot
   );
 
+  const favoriteIds = useMemo(
+    () => new Set(favorites.map((f) => f.id)),
+    [favorites]
+  );
+
   const toggleFavorite = (image: ImageWithPalette) => store.toggle(image);
-  const isFavorite = (imageId: string) => favorites.some((f) => f.id === imageId);
+  const isFavorite = (imageId: string) => favoriteIds.has(imageId);
 
   return { favorites, toggleFavorite, isFavorite };
 };

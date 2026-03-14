@@ -1,12 +1,12 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState, useRef } from "react";
-import { ExternalLinkIcon } from "~/components/Icons";
-import { HeartIcon, ImageCard } from "~/components/ImageCard";
+import { ExternalLinkIcon, HeartIcon } from "~/components/Icons";
+import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { PaletteAdjustControls } from "~/components/PaletteAdjustControls";
 import { PhotoPageSkeleton } from "~/components/PhotoPageSkeleton";
-import { useFavorites } from "~/hooks/useFavorites";
+import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
 import { photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
 import { UTM } from "~/utils/utm";
 
@@ -28,22 +28,11 @@ const PhotoPage = () => {
   const router = useRouter();
   const { data: photo } = useQuery(photoQueryOptions(photoId));
   const { data: related = [] } = useQuery(relatedPhotosQueryOptions(photoId));
-  const { toggleFavorite, isFavorite } = useFavorites();
-  const [isPopping, setIsPopping] = useState(false);
-  const popTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(photo?.id ?? "");
+
+  const relatedPhotos = useMemo(() => related, [related]);
 
   if (!photo) return null;
-
-  const favorited = isFavorite(photo.id);
-
-  const handleToggleFavorite = () => {
-    toggleFavorite(photo);
-    if (!favorited) {
-      if (popTimerRef.current) clearTimeout(popTimerRef.current);
-      setIsPopping(true);
-      popTimerRef.current = setTimeout(() => setIsPopping(false), 450);
-    }
-  };
 
   return (
     <div className="p-2 md:p-4">
@@ -56,12 +45,12 @@ const PhotoPage = () => {
           Back
         </button>
         <button
-          onClick={handleToggleFavorite}
+          onClick={() => handleToggleFavorite(photo)}
           className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm backdrop-blur-md transition-colors duration-200 hover:bg-white/10"
-          style={{ color: favorited ? "var(--color-brand-400)" : "var(--color-text-muted)" }}
+          style={{ color: isFavorite ? "var(--color-brand-400)" : "var(--color-text-muted)" }}
         >
-          <HeartIcon filled={favorited} className={`w-3.5 shrink-0${isPopping ? " animate-heart-pop" : ""}`} />
-          {favorited ? "Favorited" : "Add to favorites"}
+          <HeartIcon filled={isFavorite} className={`w-3.5 shrink-0${isPopping ? " animate-heart-pop" : ""}`} />
+          {isFavorite ? "Favorited" : "Add to favorites"}
         </button>
       </div>
 
@@ -95,22 +84,12 @@ const PhotoPage = () => {
         <h2 className="mb-4 bg-gradient-to-br from-brand-300 to-brand-500 bg-clip-text p-2 font-display text-2xl font-extrabold tracking-tight text-transparent md:p-0 md:text-3xl">
           Related photos
         </h2>
-        {related.length === 0 ? (
+        {relatedPhotos.length === 0 ? (
           <p className="py-8 text-center text-sm text-text-muted">No related photos found.</p>
         ) : (
           <ImageGrid>
-            {related.map((image, index) => (
-              <ImageCard
-                key={image.id}
-                id={image.id}
-                url={image.url}
-                smallUrl={image.smallUrl}
-                thumbnail={image.thumbnail}
-                hexValues={image.hexValues}
-                userName={image.userName}
-                photoUrl={image.photoUrl}
-                index={index}
-              />
+            {relatedPhotos.map((image, index) => (
+              <ImageCard key={image.id} image={image} index={index} />
             ))}
           </ImageGrid>
         )}
@@ -121,10 +100,7 @@ const PhotoPage = () => {
 
 export const Route = createFileRoute("/_app/photos/$photoId")({
   loader: ({ context, params }) =>
-    Promise.all([
-      context.queryClient.ensureQueryData(photoQueryOptions(params.photoId)),
-      context.queryClient.ensureQueryData(relatedPhotosQueryOptions(params.photoId)),
-    ]),
+    context.queryClient.ensureQueryData(photoQueryOptions(params.photoId)),
   pendingComponent: PhotoPageSkeleton,
   component: PhotoPage,
 });

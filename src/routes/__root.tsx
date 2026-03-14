@@ -58,7 +58,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--color-brand-900)_0%,_transparent_50%)] opacity-15" />
         <div className="noise-overlay" />
         <div className="relative">{children}</div>
-        <ReactQueryDevtools buttonPosition="bottom-right" />
+        {import.meta.env.DEV && <ReactQueryDevtools buttonPosition="bottom-right" />}
         <Scripts />
       </body>
     </html>

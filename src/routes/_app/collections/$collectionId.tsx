@@ -1,11 +1,7 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
-import { ImageCard } from "~/components/ImageCard";
-import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { LoadMoreButton } from "~/components/LoadMoreButton";
-import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
 import { collectionPhotosInfiniteOptions } from "~/integration/unsplash";
 
 const validateSearch = z.object({
@@ -15,15 +11,6 @@ const validateSearch = z.object({
 const CollectionPhotosPage = () => {
   const { collectionId } = Route.useParams();
   const { title } = useSearch({ from: "/_app/collections/$collectionId" });
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteQuery(collectionPhotosInfiniteOptions(collectionId));
-
-  const images = data?.pages.flat() ?? [];
-
-  if (images.length === 0) {
-    if (isFetching) return <ImageGridSkeleton />;
-    return <NoImagesAlert>Found no photos in this collection.</NoImagesAlert>;
-  }
 
   return (
     <>
@@ -39,25 +26,10 @@ const CollectionPhotosPage = () => {
           Back to results
         </Link>
       </div>
-      <ImageGrid>
-        {images.map((image, index) => (
-          <ImageCard
-            key={image.id}
-            id={image.id}
-            url={image.url}
-            smallUrl={image.smallUrl}
-            thumbnail={image.thumbnail}
-            hexValues={image.hexValues}
-            userName={image.userName}
-            photoUrl={image.photoUrl}
-            index={index}
-          />
-        ))}
-      </ImageGrid>
-      {isFetchingNextPage && <ImageGridSkeleton />}
-      {hasNextPage && !isFetchingNextPage && (
-        <LoadMoreButton onClick={() => fetchNextPage()} />
-      )}
+      <InfiniteImageGrid
+        queryOptions={collectionPhotosInfiniteOptions(collectionId)}
+        emptyMessage="Found no photos in this collection."
+      />
     </>
   );
 };

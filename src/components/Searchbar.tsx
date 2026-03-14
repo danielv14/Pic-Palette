@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { Select } from "@base-ui/react/select";
 import { useNavigate } from "@tanstack/react-router";
+import { CheckIcon } from "~/components/Icons";
 
 export const SEARCH_TYPES = ["photos", "collections"] as const;
 export type SearchType = (typeof SEARCH_TYPES)[number];
@@ -70,9 +71,7 @@ export const Searchbar = () => {
                     >
                       <Select.ItemText>{LABELS[searchType]}</Select.ItemText>
                       <Select.ItemIndicator className="ml-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-3.5 w-3.5 text-brand-500">
-                          <path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
-                        </svg>
+                        <CheckIcon />
                       </Select.ItemIndicator>
                     </Select.Item>
                   ))}

@@ -1,11 +1,7 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
-import { ImageCard } from "~/components/ImageCard";
-import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { LoadMoreButton } from "~/components/LoadMoreButton";
-import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
 import { topicPhotosInfiniteOptions } from "~/integration/unsplash";
 
 const validateSearch = z.object({
@@ -15,15 +11,6 @@ const validateSearch = z.object({
 const TopicPhotosPage = () => {
   const { topicSlug } = Route.useParams();
   const { title } = useSearch({ from: "/_app/topics/$topicSlug" });
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteQuery(topicPhotosInfiniteOptions(topicSlug));
-
-  const images = data?.pages.flat() ?? [];
-
-  if (images.length === 0) {
-    if (isFetching) return <ImageGridSkeleton />;
-    return <NoImagesAlert>Found no images for this topic.</NoImagesAlert>;
-  }
 
   return (
     <>
@@ -38,25 +25,10 @@ const TopicPhotosPage = () => {
           All topics
         </Link>
       </div>
-      <ImageGrid>
-        {images.map((image, index) => (
-          <ImageCard
-            key={image.id}
-            id={image.id}
-            url={image.url}
-            smallUrl={image.smallUrl}
-            thumbnail={image.thumbnail}
-            hexValues={image.hexValues}
-            userName={image.userName}
-            photoUrl={image.photoUrl}
-            index={index}
-          />
-        ))}
-      </ImageGrid>
-      {isFetchingNextPage && <ImageGridSkeleton />}
-      {hasNextPage && !isFetchingNextPage && (
-        <LoadMoreButton onClick={() => fetchNextPage()} />
-      )}
+      <InfiniteImageGrid
+        queryOptions={topicPhotosInfiniteOptions(topicSlug)}
+        emptyMessage="Found no images for this topic."
+      />
     </>
   );
 };

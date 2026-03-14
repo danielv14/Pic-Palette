@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "@tanstack/react-router";
 import type { Collection } from "~/types/Collection";
+import { CardOverlay } from "~/components/CardOverlay";
 
 export const CollectionCard = ({ collection }: { collection: Collection }) => (
   <Link
@@ -29,8 +30,7 @@ export const CollectionCard = ({ collection }: { collection: Collection }) => (
           </div>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 backdrop-blur-md [mask-image:linear-gradient(to_bottom,transparent,black_40%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent" />
+      <CardOverlay />
       <div className="absolute bottom-0 p-4">
         <h3 className="text-lg font-bold leading-tight text-white drop-shadow-md">
           {collection.title}

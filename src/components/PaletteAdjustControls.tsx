@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { adjustColor, type ColorAdjustments, DEFAULT_ADJUSTMENTS } from "~/utils/colorAdjust";
-import { sleep } from "~/utils/sleep";
+import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { Tooltip } from "~/components/Tooltip";
 
 interface PaletteAdjustControlsProps {
@@ -43,32 +43,14 @@ const SliderRow = ({ label, value, min, max, onChange, displayValue }: SliderRow
 
 export const PaletteAdjustControls = ({ hexValues }: PaletteAdjustControlsProps) => {
   const [adjustments, setAdjustments] = useState<ColorAdjustments>(DEFAULT_ADJUSTMENTS);
-  const [hasCopied, setHasCopied] = useState(false);
-  const [copiedHex, setCopiedHex] = useState<string | null>(null);
+  const { copiedValue, copyToClipboard } = useCopyToClipboard();
 
-  const adjustedColors = hexValues.map((hex) => adjustColor(hex, adjustments));
+  const adjustedColors = useMemo(
+    () => hexValues.map((hex) => adjustColor(hex, adjustments)),
+    [hexValues, adjustments],
+  );
 
-  const copyAll = async () => {
-    try {
-      await navigator.clipboard.writeText(adjustedColors.join(","));
-      setHasCopied(true);
-      await sleep(1000);
-      setHasCopied(false);
-    } catch {
-      // clipboard not available
-    }
-  };
-
-  const copySwatch = async (hex: string) => {
-    try {
-      await navigator.clipboard.writeText(hex);
-      setCopiedHex(hex);
-      await sleep(1000);
-      setCopiedHex(null);
-    } catch {
-      // clipboard not available
-    }
-  };
+  const allColorsJoined = adjustedColors.join(",");
 
   const updateAdjustment = (key: keyof ColorAdjustments, value: number) => {
     setAdjustments((prev) => ({ ...prev, [key]: value }));
@@ -103,10 +85,10 @@ export const PaletteAdjustControls = ({ hexValues }: PaletteAdjustControlsProps)
             Adjusted
           </p>
           <div className="flex flex-row gap-2">
-            {adjustedColors.map((hex, index) => (
-              <Tooltip key={`adj-${index}`} content={copiedHex === hex ? "Copied!" : hex}>
+            {adjustedColors.map((hex, colorIndex) => (
+              <Tooltip key={`adj-${colorIndex}`} content={copiedValue === hex ? "Copied!" : hex}>
                 <button
-                  onClick={() => copySwatch(hex)}
+                  onClick={() => copyToClipboard(hex)}
                   style={{ background: hex }}
                   className="h-9 w-9 cursor-pointer rounded-full ring-2 ring-transparent transition-all duration-200 hover:scale-110 hover:ring-white/30"
                 />
@@ -166,10 +148,10 @@ export const PaletteAdjustControls = ({ hexValues }: PaletteAdjustControlsProps)
       </div>
 
       <button
-        onClick={copyAll}
+        onClick={() => copyToClipboard(allColorsJoined)}
         className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand-500 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-brand-400"
       >
-        {hasCopied ? "Copied!" : "Copy adjusted palette"}
+        {copiedValue === allColorsJoined ? "Copied!" : "Copy adjusted palette"}
       </button>
     </div>
   );

@@ -1,13 +1,14 @@
+import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
 import { CollectionCard } from "~/components/CollectionCard";
 import { ColorFilter } from "~/components/ColorFilter";
-import { ImageCard } from "~/components/ImageCard";
-import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
+import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
 import { LoadMoreButton } from "~/components/LoadMoreButton";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { PageHeading } from "~/components/PageHeading";
 import { searchCollectionsInfiniteOptions, searchPhotosInfiniteOptions } from "~/integration/unsplash";
 import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams";
 import { SEARCH_TYPES } from "~/components/Searchbar";
@@ -20,10 +21,6 @@ const searchValidateSearch = z.object({
 
 const PhotoResults = ({ query, color }: { query: string; color?: UnsplashColor }) => {
   const navigate = useNavigate();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteQuery(searchPhotosInfiniteOptions(query, color));
-
-  const images = data?.pages.flat() ?? [];
 
   const handleColorChange = (newColor: UnsplashColor | undefined) => {
     navigate({
@@ -31,11 +28,6 @@ const PhotoResults = ({ query, color }: { query: string; color?: UnsplashColor }
       search: { query, type: "photos", ...(newColor && { color: newColor }) },
     });
   };
-
-  if (images.length === 0) {
-    if (isFetching) return <ImageGridSkeleton />;
-    return <NoImagesAlert>Found no images. Search for something else.</NoImagesAlert>;
-  }
 
   return (
     <>
@@ -45,25 +37,10 @@ const PhotoResults = ({ query, color }: { query: string; color?: UnsplashColor }
         </h2>
         <ColorFilter value={color} onChange={handleColorChange} />
       </div>
-      <ImageGrid>
-        {images.map((image, index) => (
-          <ImageCard
-            key={image.id}
-            id={image.id}
-            url={image.url}
-            smallUrl={image.smallUrl}
-            thumbnail={image.thumbnail}
-            hexValues={image.hexValues}
-            userName={image.userName}
-            photoUrl={image.photoUrl}
-            index={index}
-          />
-        ))}
-      </ImageGrid>
-      {isFetchingNextPage && <ImageGridSkeleton />}
-      {hasNextPage && !isFetchingNextPage && (
-        <LoadMoreButton onClick={() => fetchNextPage()} />
-      )}
+      <InfiniteImageGrid
+        queryOptions={searchPhotosInfiniteOptions(query, color)}
+        emptyMessage="Found no images. Search for something else."
+      />
     </>
   );
 };
@@ -72,7 +49,7 @@ const CollectionResults = ({ query }: { query: string }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery(searchCollectionsInfiniteOptions(query));
 
-  const collections = data?.pages.flat() ?? [];
+  const collections = useMemo(() => data?.pages.flat() ?? [], [data?.pages]);
 
   if (collections.length === 0) {
     if (isFetching) return <ImageGridSkeleton />;
@@ -81,9 +58,9 @@ const CollectionResults = ({ query }: { query: string }) => {
 
   return (
     <>
-      <h2 className="bg-gradient-to-br from-brand-300 to-brand-600 bg-clip-text p-2 text-2xl font-extrabold text-transparent font-display md:p-4 md:text-3xl">
+      <PageHeading>
         Collections for &quot;<span className="italic">{query}</span>&quot;
-      </h2>
+      </PageHeading>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {collections.map((collection) => (
           <CollectionCard key={collection.id} collection={collection} />

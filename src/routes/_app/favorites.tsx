@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { PageHeading } from "~/components/PageHeading";
 import { useFavorites } from "~/hooks/useFavorites";
 
 const FavoritesPage = () => {
@@ -17,22 +18,10 @@ const FavoritesPage = () => {
 
   return (
     <>
-      <h2 className="bg-gradient-to-br from-brand-300 to-brand-600 bg-clip-text p-2 text-center text-2xl font-extrabold text-transparent font-display md:p-4 md:text-start md:text-3xl">
-        Favorites
-      </h2>
+      <PageHeading>Favorites</PageHeading>
       <ImageGrid>
         {favorites.map((image, index) => (
-          <ImageCard
-            key={image.id}
-            id={image.id}
-            url={image.url}
-            smallUrl={image.smallUrl}
-            thumbnail={image.thumbnail}
-            hexValues={image.hexValues}
-            userName={image.userName}
-            photoUrl={image.photoUrl}
-            index={index}
-          />
+          <ImageCard key={image.id} image={image} index={index} />
         ))}
       </ImageGrid>
     </>
