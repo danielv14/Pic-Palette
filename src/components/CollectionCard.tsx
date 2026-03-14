@@ -9,7 +9,7 @@ export const CollectionCard = ({ collection }: { collection: Collection }) => (
     params={{ collectionId: collection.id }}
     search={{ title: collection.title }}
   >
-    <div className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/0 transition-all duration-200 hover:ring-white/15 hover:shadow-lg hover:shadow-brand-500/10">
+    <div className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-2xl ring-1 ring-white/0 transition-all duration-200 hover:ring-white/15">
       {collection.coverUrl ? (
         <img
           src={collection.coverUrl}
