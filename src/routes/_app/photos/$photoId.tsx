@@ -27,7 +27,7 @@ const PhotoPage = () => {
   const { photoId } = Route.useParams();
   const router = useRouter();
   const { data: photo } = useQuery(photoQueryOptions(photoId));
-  const { data: related = [] } = useQuery(relatedPhotosQueryOptions(photoId));
+  const { data: related = [], isLoading: isLoadingRelated } = useQuery(relatedPhotosQueryOptions(photoId));
   const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(photo?.id ?? "");
 
   const relatedPhotos = useMemo(() => related, [related]);
@@ -84,7 +84,9 @@ const PhotoPage = () => {
         <h2 className="mb-4 bg-gradient-to-br from-brand-300 to-brand-500 bg-clip-text p-2 font-display text-2xl font-extrabold tracking-tight text-transparent md:p-0 md:text-3xl">
           Related photos
         </h2>
-        {relatedPhotos.length === 0 ? (
+        {isLoadingRelated ? (
+          <p className="py-8 text-center text-sm text-text-muted">Loading related photos...</p>
+        ) : relatedPhotos.length === 0 ? (
           <p className="py-8 text-center text-sm text-text-muted">No related photos found.</p>
         ) : (
           <ImageGrid>
