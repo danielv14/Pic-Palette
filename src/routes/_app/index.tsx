@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
@@ -8,7 +9,12 @@ import { pillClasses } from "~/components/PillButton";
 import { latestPhotosQueryOptions } from "~/integration/unsplash";
 
 const HomePage = () => {
-  const { data: photos = [] } = useQuery(latestPhotosQueryOptions());
+  const { data: result } = useQuery(latestPhotosQueryOptions());
+
+  if (!result) return <ImageGridSkeleton />;
+  if (result.error) return <ApiErrorAlert message={result.error} />;
+
+  const photos = result.data;
 
   if (photos.length === 0) return <ImageGridSkeleton />;
 

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
+import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { CollectionCard } from "~/components/CollectionCard";
 import { ColorFilter } from "~/components/ColorFilter";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
@@ -49,10 +50,12 @@ const CollectionResults = ({ query }: { query: string }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery(searchCollectionsInfiniteOptions(query));
 
-  const collections = useMemo(() => data?.pages.flat() ?? [], [data?.pages]);
+  const firstError = data?.pages.find((page) => page.error)?.error;
+  const collections = useMemo(() => data?.pages.flatMap((page) => page.data ?? []) ?? [], [data?.pages]);
 
   if (collections.length === 0) {
     if (isFetching) return <ImageGridSkeleton />;
+    if (firstError) return <ApiErrorAlert message={firstError} />;
     return <NoImagesAlert>Found no collections. Search for something else.</NoImagesAlert>;
   }
 

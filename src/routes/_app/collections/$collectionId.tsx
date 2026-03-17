@@ -38,7 +38,7 @@ export const Route = createFileRoute("/_app/collections/$collectionId")({
   validateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, params }) =>
-    context.queryClient.ensureInfiniteQueryData(
+    context.queryClient.prefetchInfiniteQuery(
       collectionPhotosInfiniteOptions(params.collectionId)
     ),
   pendingComponent: ImageGridSkeleton,

@@ -7,11 +7,13 @@ import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getR
 const FIVE_MINUTES = 1000 * 60 * 5;
 
 const getNextPageParam = (
-  lastPage: unknown[],
+  lastPage: { data: unknown[] | null },
   _allPages: unknown[],
   lastPageParam: number
-) =>
-  lastPage.length < AMOUNT_OF_IMAGES_TO_FETCH ? undefined : lastPageParam + 1;
+) => {
+  const items = lastPage.data ?? [];
+  return items.length < AMOUNT_OF_IMAGES_TO_FETCH ? undefined : lastPageParam + 1;
+};
 
 export const searchPhotosInfiniteOptions = (
   query: string,

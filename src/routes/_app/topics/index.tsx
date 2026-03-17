@@ -1,11 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { TopicCard } from "~/components/TopicCard";
 import { TopicGridSkeleton } from "~/components/TopicGridSkeleton";
 import { listTopicsOptions } from "~/integration/unsplash";
 
 const TopicsPage = () => {
-  const { data: topics = [] } = useQuery(listTopicsOptions());
+  const { data: result } = useQuery(listTopicsOptions());
+
+  if (!result) return <TopicGridSkeleton />;
+  if (result.error) return <ApiErrorAlert message={result.error} />;
+
+  const topics = result.data;
 
   return (
     <>

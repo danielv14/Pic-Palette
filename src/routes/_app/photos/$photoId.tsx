@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { ExternalLinkIcon, HeartIcon } from "~/components/Icons";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
@@ -26,12 +27,14 @@ const BackIcon = () => (
 const PhotoPage = () => {
   const { photoId } = Route.useParams();
   const router = useRouter();
-  const { data: photo } = useQuery(photoQueryOptions(photoId));
-  const { data: related = [], isLoading: isLoadingRelated } = useQuery(relatedPhotosQueryOptions(photoId));
+  const { data: photoResult } = useQuery(photoQueryOptions(photoId));
+  const { data: relatedResult, isLoading: isLoadingRelated } = useQuery(relatedPhotosQueryOptions(photoId));
+  const photo = photoResult?.data ?? null;
   const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(photo?.id ?? "");
 
-  const relatedPhotos = useMemo(() => related, [related]);
+  const relatedPhotos = useMemo(() => relatedResult?.data ?? [], [relatedResult]);
 
+  if (photoResult?.error) return <ApiErrorAlert message={photoResult.error} />;
   if (!photo) return null;
 
   return (
@@ -86,6 +89,8 @@ const PhotoPage = () => {
         </h2>
         {isLoadingRelated ? (
           <p className="py-8 text-center text-sm text-text-muted">Loading related photos...</p>
+        ) : relatedResult?.error ? (
+          <ApiErrorAlert message={relatedResult.error} />
         ) : relatedPhotos.length === 0 ? (
           <p className="py-8 text-center text-sm text-text-muted">No related photos found.</p>
         ) : (
