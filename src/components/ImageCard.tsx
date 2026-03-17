@@ -2,11 +2,10 @@ import { useState } from "react";
 import { Dialog, Menu } from "@base-ui/react";
 import { Link } from "@tanstack/react-router";
 import { UTM } from "~/utils/utm";
-import { AdjustIcon, CloseIcon, CopyIcon, ExternalLinkIcon, HeartIcon, PersonIcon, RelatedIcon } from "~/components/Icons";
+import { AdjustIcon, CloseIcon, CopyIcon, ExternalLinkIcon, HeartIcon, PersonIcon } from "~/components/Icons";
 import { CardOverlay } from "~/components/CardOverlay";
 import { Tooltip } from "~/components/Tooltip";
 import { ColorAdjustDialog } from "~/components/ColorAdjustDialog";
-import { RelatedPhotosDrawer } from "~/components/RelatedPhotosDrawer";
 import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import type { ImageWithPalette } from "~/types/Image";
@@ -19,7 +18,6 @@ interface ImageCardProps {
 export const ImageCard = ({ image, index }: ImageCardProps) => {
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
-  const [isRelatedDrawerOpen, setIsRelatedDrawerOpen] = useState(false);
   const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(image.id);
   const { copiedValue, copyToClipboard } = useCopyToClipboard();
 
@@ -87,13 +85,6 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
                   <CopyIcon />
                   Copy all colors
                 </Menu.Item>
-                <Menu.Item
-                  onClick={() => setIsRelatedDrawerOpen(true)}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-text-secondary outline-none transition-colors hover:bg-surface-3 hover:text-text-primary"
-                >
-                  <RelatedIcon />
-                  Related photos
-                </Menu.Item>
                 <Menu.Separator className="my-1 border-t border-surface-3" />
                 <Menu.Item
                   onClick={() => setIsAuthorDialogOpen(true)}
@@ -109,14 +100,6 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
         </div>
       </div>
 
-      {isRelatedDrawerOpen && (
-        <RelatedPhotosDrawer
-          photoId={image.id}
-          open={isRelatedDrawerOpen}
-          onOpenChange={setIsRelatedDrawerOpen}
-        />
-      )}
-
       {isAdjustDialogOpen && (
         <ColorAdjustDialog
           hexValues={image.hexValues}
@@ -128,8 +111,8 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
       {isAuthorDialogOpen && (
         <Dialog.Root open={isAuthorDialogOpen} onOpenChange={setIsAuthorDialogOpen}>
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-200 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
-            <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-surface-3 bg-surface-1 p-6 shadow-2xl transition-all duration-200 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0">
+            <Dialog.Backdrop className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
+            <Dialog.Popup className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 animate-dialog-enter rounded-2xl border border-surface-3 bg-surface-1 p-6 shadow-2xl transition-all duration-300 ease-out data-[ending-style]:scale-[0.97] data-[ending-style]:opacity-0">
               <div className="mb-5 flex items-center justify-between">
                 <Dialog.Title className="font-display text-lg font-semibold text-text-primary">
                   About photo
