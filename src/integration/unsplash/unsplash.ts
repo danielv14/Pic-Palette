@@ -10,10 +10,24 @@ import type { Topic } from "~/types/Topic";
 import { getAccessKey } from "./config";
 import { getPhotosWithPalettes } from "./getPhotosWithPalettes";
 
-const getUnsplashAPI = () =>
-  Unsplash.createApi({
-    accessKey: getAccessKey(),
-  });
+let unsplashInstance: ReturnType<typeof Unsplash.createApi> | null = null;
+
+const getUnsplashAPI = () => {
+  if (!unsplashInstance) {
+    unsplashInstance = Unsplash.createApi({
+      accessKey: getAccessKey(),
+    });
+  }
+  return unsplashInstance;
+};
+
+const RATE_LIMIT_MESSAGE =
+  "Rate limit exceeded. Unsplash allows 50 requests/hour for demo apps. Please wait and try again.";
+
+const isRateLimitError = (message: string): boolean =>
+  message.toLowerCase().includes("rate limit") ||
+  message.includes("403") ||
+  message.includes("expected JSON");
 
 const toErrorMessage = (prefix: string, error: unknown): string => {
   let message: string;
@@ -29,8 +43,8 @@ const toErrorMessage = (prefix: string, error: unknown): string => {
     }
   }
   console.error(`[${prefix}]`, message);
-  if (message.toLowerCase().includes("rate limit") || message.includes("403") || message.includes("expected JSON")) {
-    return "Rate limit exceeded. Unsplash allows 50 requests/hour for demo apps. Please wait and try again.";
+  if (isRateLimitError(message)) {
+    return RATE_LIMIT_MESSAGE;
   }
   return `Failed to fetch data from Unsplash. Please try again later.`;
 };
@@ -38,8 +52,8 @@ const toErrorMessage = (prefix: string, error: unknown): string => {
 const apiErrorsToMessage = (prefix: string, errors: string[]): string => {
   const message = errors.join(", ");
   console.error(`[${prefix}] Unsplash API error:`, message);
-  if (message.toLowerCase().includes("rate limit")) {
-    return "Rate limit exceeded. Unsplash allows 50 requests/hour for demo apps. Please wait and try again.";
+  if (isRateLimitError(message)) {
+    return RATE_LIMIT_MESSAGE;
   }
   return `Unsplash API error: ${message}`;
 };
