@@ -107,7 +107,10 @@ const PhotoPage = () => {
 
 export const Route = createFileRoute("/_app/photos/$photoId")({
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(photoQueryOptions(params.photoId)),
+    Promise.all([
+      context.queryClient.ensureQueryData(photoQueryOptions(params.photoId)),
+      context.queryClient.ensureQueryData(relatedPhotosQueryOptions(params.photoId)),
+    ]),
   pendingComponent: PhotoPageSkeleton,
   component: PhotoPage,
 });

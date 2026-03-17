@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
 import { PageHeading } from "~/components/PageHeading";
-import { pillClasses } from "~/components/PillButton";
+import { PillLink } from "~/components/PillLink";
 import { latestPhotosQueryOptions } from "~/integration/unsplash";
 
 const HomePage = () => {
@@ -26,15 +26,9 @@ const HomePage = () => {
           <ImageCard key={photo.id} image={photo} index={index} />
         ))}
       </ImageGrid>
-      <div className="mt-6 mb-6 flex justify-center">
-        <Link
-          to="/list"
-          search={{ type: "latest" }}
-          className={pillClasses}
-        >
-          See all latest photos
-        </Link>
-      </div>
+      <PillLink to="/list" search={{ type: "latest" }}>
+        See all latest photos
+      </PillLink>
     </>
   );
 };
