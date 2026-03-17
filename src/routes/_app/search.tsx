@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
@@ -10,6 +9,7 @@ import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
 import { LoadMoreButton } from "~/components/LoadMoreButton";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
 import { PageHeading } from "~/components/PageHeading";
+import { useInfinitePages } from "~/hooks/useInfinitePages";
 import { searchCollectionsInfiniteOptions, searchPhotosInfiniteOptions } from "~/integration/unsplash";
 import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams";
 import { SEARCH_TYPES } from "~/components/Searchbar";
@@ -50,8 +50,7 @@ const CollectionResults = ({ query }: { query: string }) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery(searchCollectionsInfiniteOptions(query));
 
-  const firstError = data?.pages.find((page) => page.error)?.error;
-  const collections = useMemo(() => data?.pages.flatMap((page) => page.data ?? []) ?? [], [data?.pages]);
+  const { items: collections, firstError } = useInfinitePages(data?.pages);
 
   if (collections.length === 0) {
     if (isFetching) return <ImageGridSkeleton />;

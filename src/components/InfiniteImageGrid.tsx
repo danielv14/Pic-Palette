@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { ImageCard } from "~/components/ImageCard";
@@ -6,6 +5,7 @@ import { ImageGrid } from "~/components/ImageGrid";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
 import { LoadMoreButton } from "~/components/LoadMoreButton";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { useInfinitePages } from "~/hooks/useInfinitePages";
 import type { ApiResult } from "~/types/ApiResult";
 import type { ImageWithPalette } from "~/types/Image";
 
@@ -19,11 +19,7 @@ export const InfiniteImageGrid = ({ queryOptions, emptyMessage = "No images foun
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery(queryOptions);
 
-  const firstError = data?.pages.find((page) => page.error)?.error;
-  const images = useMemo(
-    () => data?.pages.flatMap((page) => page.data ?? []) ?? [],
-    [data?.pages]
-  );
+  const { items: images, firstError } = useInfinitePages(data?.pages);
 
   if (images.length === 0) {
     if (isFetching) return <ImageGridSkeleton />;
