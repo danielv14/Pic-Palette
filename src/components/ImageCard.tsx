@@ -7,23 +7,25 @@ import { CardOverlay } from "~/components/CardOverlay";
 import { Tooltip } from "~/components/Tooltip";
 import { ColorAdjustDialog } from "~/components/ColorAdjustDialog";
 import { DialogFrame } from "~/components/DialogFrame";
+import { useColorPalette } from "~/hooks/useColorPalette";
 import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
-import type { ImageWithPalette } from "~/types/Image";
+import type { UnsplashImage } from "~/types/Image";
 
 interface ImageCardProps {
-  image: ImageWithPalette;
+  image: UnsplashImage;
   index: number;
 }
 
 export const ImageCard = ({ image, index }: ImageCardProps) => {
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);
+  const hexValues = useColorPalette(image.thumbnail);
   const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(image.id);
   const { copiedValue, copyToClipboard } = useCopyToClipboard();
 
   const copyAllColors = async () => {
-    await copyToClipboard(image.hexValues.join(","));
+    await copyToClipboard(hexValues.join(","));
   };
 
   return (
@@ -46,7 +48,7 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
       <CardOverlay />
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between p-4">
         <div className="flex flex-row -space-x-2">
-          {image.hexValues.map((hex) => (
+          {hexValues.map((hex) => (
             <Tooltip key={`hex-${hex}`} content={copiedValue === hex ? "Copied!" : hex}>
               <button
                 onClick={() => copyToClipboard(hex)}
@@ -103,7 +105,7 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
 
       {isAdjustDialogOpen && (
         <ColorAdjustDialog
-          hexValues={image.hexValues}
+          hexValues={hexValues}
           open={isAdjustDialogOpen}
           onOpenChange={setIsAdjustDialogOpen}
         />

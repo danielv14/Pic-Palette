@@ -7,6 +7,7 @@ import { ImageCard } from "~/components/ImageCard";
 import { ImageGrid } from "~/components/ImageGrid";
 import { PaletteAdjustControls } from "~/components/PaletteAdjustControls";
 import { PhotoPageSkeleton } from "~/components/PhotoPageSkeleton";
+import { useColorPalette } from "~/hooks/useColorPalette";
 import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
 import { photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
 import { UTM } from "~/utils/utm";
@@ -30,6 +31,7 @@ const PhotoPage = () => {
   const { data: photoResult } = useQuery(photoQueryOptions(photoId));
   const { data: relatedResult, isLoading: isLoadingRelated } = useQuery(relatedPhotosQueryOptions(photoId));
   const photo = photoResult?.data ?? null;
+  const hexValues = useColorPalette(photo?.thumbnail ?? "");
   const { isFavorite, isPopping, handleToggleFavorite } = useFavoriteToggle(photo?.id ?? "");
 
   const relatedPhotos = useMemo(() => relatedResult?.data ?? [], [relatedResult]);
@@ -79,7 +81,7 @@ const PhotoPage = () => {
           <h2 className="mb-5 font-display text-lg font-semibold text-text-primary">
             Palette
           </h2>
-          <PaletteAdjustControls hexValues={photo.hexValues} />
+          <PaletteAdjustControls hexValues={hexValues} />
         </div>
       </div>
 

@@ -6,9 +6,10 @@
 # testing
 /coverage
 
-# tanstack start / vite
+# tanstack start / vite / cloudflare
 /.output/
 /.vinxi/
+/.wrangler/
 app.config.timestamp_*
 
 # next.js (legacy)

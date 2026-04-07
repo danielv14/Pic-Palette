@@ -7,11 +7,11 @@ import { LoadMoreButton } from "~/components/LoadMoreButton";
 import { NoImagesAlert } from "~/components/NoImagesAlert";
 import { useInfinitePages } from "~/hooks/useInfinitePages";
 import type { ApiResult } from "~/types/ApiResult";
-import type { ImageWithPalette } from "~/types/Image";
+import type { UnsplashImage } from "~/types/Image";
 
 interface InfiniteImageGridProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  queryOptions: Parameters<typeof useInfiniteQuery<ApiResult<ImageWithPalette[]>, Error, { pages: ApiResult<ImageWithPalette[]>[] }, any, number>>[0];
+  queryOptions: Parameters<typeof useInfiniteQuery<ApiResult<UnsplashImage[]>, Error, { pages: ApiResult<UnsplashImage[]>[] }, any, number>>[0];
   emptyMessage?: string;
 }
 

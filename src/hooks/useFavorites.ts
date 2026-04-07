@@ -1,9 +1,9 @@
 import { useMemo, useSyncExternalStore } from "react";
-import type { ImageWithPalette } from "~/types/Image";
+import type { UnsplashImage } from "~/types/Image";
 
 const STORAGE_KEY = "pic-palette-favorites";
 
-const readFromStorage = (): ImageWithPalette[] => {
+const readFromStorage = (): UnsplashImage[] => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
@@ -12,7 +12,7 @@ const readFromStorage = (): ImageWithPalette[] => {
   }
 };
 
-const writeToStorage = (favorites: ImageWithPalette[]) => {
+const writeToStorage = (favorites: UnsplashImage[]) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
   } catch {
@@ -22,7 +22,7 @@ const writeToStorage = (favorites: ImageWithPalette[]) => {
 
 // Shared in-memory store - all hook instances share the same state
 type Listener = () => void;
-let currentFavorites: ImageWithPalette[] = [];
+let currentFavorites: UnsplashImage[] = [];
 const listeners = new Set<Listener>();
 
 const notifyListeners = () => listeners.forEach((listener) => listener());
@@ -33,12 +33,12 @@ const store = {
     return () => listeners.delete(listener);
   },
   getSnapshot: () => currentFavorites,
-  getServerSnapshot: (): ImageWithPalette[] => [],
+  getServerSnapshot: (): UnsplashImage[] => [],
   initialize: () => {
     currentFavorites = readFromStorage();
     notifyListeners();
   },
-  toggle: (image: ImageWithPalette) => {
+  toggle: (image: UnsplashImage) => {
     const alreadyFavorited = currentFavorites.some((f) => f.id === image.id);
     currentFavorites = alreadyFavorited
       ? currentFavorites.filter((f) => f.id !== image.id)
@@ -65,7 +65,7 @@ export const useFavorites = () => {
     [favorites]
   );
 
-  const toggleFavorite = (image: ImageWithPalette) => store.toggle(image);
+  const toggleFavorite = (image: UnsplashImage) => store.toggle(image);
   const isFavorite = (imageId: string) => favoriteIds.has(imageId);
 
   return { favorites, toggleFavorite, isFavorite };

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useFavorites } from "~/hooks/useFavorites";
-import type { ImageWithPalette } from "~/types/Image";
+import type { UnsplashImage } from "~/types/Image";
 
 export const useFavoriteToggle = (imageId: string) => {
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -15,7 +15,7 @@ export const useFavoriteToggle = (imageId: string) => {
 
   const favorited = isFavorite(imageId);
 
-  const handleToggleFavorite = (image: ImageWithPalette) => {
+  const handleToggleFavorite = (image: UnsplashImage) => {
     toggleFavorite(image);
     if (!favorited) {
       if (popTimerRef.current) clearTimeout(popTimerRef.current);

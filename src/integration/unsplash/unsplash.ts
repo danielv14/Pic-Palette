@@ -5,10 +5,10 @@ import type { ImageSearchOptions } from "~/schemas/ImageSearchParams";
 import type { TopicPhotosOptions } from "~/schemas/TopicPhotosParams";
 import type { ApiResult } from "~/types/ApiResult";
 import type { Collection } from "~/types/Collection";
-import type { ImageWithPalette } from "~/types/Image";
+import type { UnsplashImage } from "~/types/Image";
 import type { Topic } from "~/types/Topic";
 import { getAccessKey } from "./config";
-import { getPhotosWithPalettes } from "./getPhotosWithPalettes";
+import { mapPhotos } from "./getPhotosWithPalettes";
 
 let unsplashInstance: ReturnType<typeof Unsplash.createApi> | null = null;
 
@@ -60,7 +60,7 @@ const apiErrorsToMessage = (prefix: string, errors: string[]): string => {
 
 export const searchPhotosByQuery = createServerFn({ method: "GET" })
   .inputValidator((params: ImageSearchOptions) => params)
-  .handler(async ({ data }): Promise<ApiResult<ImageWithPalette[]>> => {
+  .handler(async ({ data }): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const { query, page = 1, perPage, color } = data;
       const photos = await getUnsplashAPI().search.getPhotos({
@@ -75,7 +75,7 @@ export const searchPhotosByQuery = createServerFn({ method: "GET" })
       if (photos.errors || !photos.response) {
         return { data: null, error: apiErrorsToMessage("searchPhotosByQuery", photos.errors ?? ["Unknown error"]) };
       }
-      return { data: await getPhotosWithPalettes(photos.response.results), error: null };
+      return { data: mapPhotos(photos.response.results), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("searchPhotosByQuery", error) };
     }
@@ -109,7 +109,7 @@ export const listTopics = createServerFn({ method: "GET" }).handler(
 
 export const getTopicPhotos = createServerFn({ method: "GET" })
   .inputValidator((params: TopicPhotosOptions) => params)
-  .handler(async ({ data }): Promise<ApiResult<ImageWithPalette[]>> => {
+  .handler(async ({ data }): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const { topicSlug, page = 1, perPage } = data;
       const photos = await getUnsplashAPI().topics.getPhotos({
@@ -120,7 +120,7 @@ export const getTopicPhotos = createServerFn({ method: "GET" })
       if (photos.errors || !photos.response) {
         return { data: null, error: apiErrorsToMessage("getTopicPhotos", photos.errors ?? ["Unknown error"]) };
       }
-      return { data: await getPhotosWithPalettes(photos.response.results), error: null };
+      return { data: mapPhotos(photos.response.results), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("getTopicPhotos", error) };
     }
@@ -128,13 +128,13 @@ export const getTopicPhotos = createServerFn({ method: "GET" })
 
 export const getPhoto = createServerFn({ method: "GET" })
   .inputValidator((photoId: string) => photoId)
-  .handler(async ({ data: photoId }): Promise<ApiResult<ImageWithPalette | null>> => {
+  .handler(async ({ data: photoId }): Promise<ApiResult<UnsplashImage | null>> => {
     try {
       const response = await getUnsplashAPI().photos.get({ photoId });
       if (response.errors || !response.response) {
         return { data: null, error: apiErrorsToMessage("getPhoto", response.errors ?? ["Unknown error"]) };
       }
-      const results = await getPhotosWithPalettes([response.response as any]);
+      const results = mapPhotos([response.response as any]);
       return { data: results[0] ?? null, error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("getPhoto", error) };
@@ -142,7 +142,7 @@ export const getPhoto = createServerFn({ method: "GET" })
   });
 
 export const getRandomPhotos = createServerFn({ method: "GET" }).handler(
-  async (): Promise<ApiResult<ImageWithPalette[]>> => {
+  async (): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const response = await getUnsplashAPI().photos.getRandom({
         count: 20,
@@ -154,7 +154,7 @@ export const getRandomPhotos = createServerFn({ method: "GET" }).handler(
       const photos = Array.isArray(response.response)
         ? response.response
         : [response.response];
-      return { data: await getPhotosWithPalettes(photos as any), error: null };
+      return { data: mapPhotos(photos as any), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("getRandomPhotos", error) };
     }
@@ -163,7 +163,7 @@ export const getRandomPhotos = createServerFn({ method: "GET" }).handler(
 
 export const getRelatedPhotos = createServerFn({ method: "GET" })
   .inputValidator((photoId: string) => photoId)
-  .handler(async ({ data: photoId }): Promise<ApiResult<ImageWithPalette[]>> => {
+  .handler(async ({ data: photoId }): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const response = await fetch(
         `https://api.unsplash.com/photos/${photoId}/related`,
@@ -177,7 +177,7 @@ export const getRelatedPhotos = createServerFn({ method: "GET" })
         return { data: null, error: `Unsplash API error: ${status} ${response.statusText}` };
       }
       const json = await response.json();
-      return { data: await getPhotosWithPalettes(json.results ?? []), error: null };
+      return { data: mapPhotos(json.results ?? []), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("getRelatedPhotos", error) };
     }
@@ -211,14 +211,14 @@ export const searchCollectionsByQuery = createServerFn({ method: "GET" })
 
 export const getCollectionPhotos = createServerFn({ method: "GET" })
   .inputValidator((params: { collectionId: string; page?: number; perPage?: number }) => params)
-  .handler(async ({ data }): Promise<ApiResult<ImageWithPalette[]>> => {
+  .handler(async ({ data }): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const { collectionId, page = 1, perPage } = data;
       const response = await getUnsplashAPI().collections.getPhotos({ collectionId, page, perPage });
       if (response.errors || !response.response) {
         return { data: null, error: apiErrorsToMessage("getCollectionPhotos", response.errors ?? ["Unknown error"]) };
       }
-      return { data: await getPhotosWithPalettes(response.response.results), error: null };
+      return { data: mapPhotos(response.response.results), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("getCollectionPhotos", error) };
     }
@@ -226,7 +226,7 @@ export const getCollectionPhotos = createServerFn({ method: "GET" })
 
 export const listPhotosByType = createServerFn({ method: "GET" })
   .inputValidator((params: ImageListOptions) => params)
-  .handler(async ({ data }): Promise<ApiResult<ImageWithPalette[]>> => {
+  .handler(async ({ data }): Promise<ApiResult<UnsplashImage[]>> => {
     try {
       const { perPage, page, type } = data;
       const photos = await getUnsplashAPI().photos.list({
@@ -237,7 +237,7 @@ export const listPhotosByType = createServerFn({ method: "GET" })
       if (photos.errors || !photos.response) {
         return { data: null, error: apiErrorsToMessage("listPhotosByType", photos.errors ?? ["Unknown error"]) };
       }
-      return { data: await getPhotosWithPalettes(photos.response.results), error: null };
+      return { data: mapPhotos(photos.response.results), error: null };
     } catch (error) {
       return { data: null, error: toErrorMessage("listPhotosByType", error) };
     }
