@@ -34,6 +34,9 @@ const HomePage = () => {
 };
 
 export const Route = createFileRoute("/_app/")({
+  head: () => ({
+    meta: [{ title: "Pic Palette" }],
+  }),
   loader: ({ context }) =>
     context.queryClient.ensureQueryData(latestPhotosQueryOptions()),
   pendingComponent: ImageGridSkeleton,

@@ -27,6 +27,13 @@ const ListPage = () => {
 };
 
 export const Route = createFileRoute("/_app/list")({
+  head: ({ search }) => ({
+    meta: [
+      {
+        title: `${search.type.charAt(0).toUpperCase() + search.type.slice(1)} images - Pic Palette`,
+      },
+    ],
+  }),
   validateSearch: listValidateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) =>

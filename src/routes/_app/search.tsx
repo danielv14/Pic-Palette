@@ -87,6 +87,15 @@ const SearchPage = () => {
 };
 
 export const Route = createFileRoute("/_app/search")({
+  head: ({ search }) => ({
+    meta: [
+      {
+        title: search.query
+          ? `${search.query} - Pic Palette`
+          : "Search - Pic Palette",
+      },
+    ],
+  }),
   validateSearch: searchValidateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {

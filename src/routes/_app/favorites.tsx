@@ -29,5 +29,8 @@ const FavoritesPage = () => {
 };
 
 export const Route = createFileRoute("/_app/favorites")({
+  head: () => ({
+    meta: [{ title: "Favorites - Pic Palette" }],
+  }),
   component: FavoritesPage,
 });
