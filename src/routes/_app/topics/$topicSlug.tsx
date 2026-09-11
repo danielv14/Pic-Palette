@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
+import { ImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
+import { InfiniteResults } from "~/components/InfiniteResults";
 import { topicPhotosInfiniteOptions } from "~/integration/unsplash";
 
 const validateSearch = z.object({
@@ -25,8 +26,9 @@ const TopicPhotosPage = () => {
           All topics
         </Link>
       </div>
-      <InfiniteImageGrid
+      <InfiniteResults
         queryOptions={topicPhotosInfiniteOptions(topicSlug)}
+        renderItem={(image, index) => <ImageCard key={image.id} image={image} index={index} />}
         emptyMessage="Found no images for this topic."
       />
     </>
@@ -35,7 +37,6 @@ const TopicPhotosPage = () => {
 
 export const Route = createFileRoute("/_app/topics/$topicSlug")({
   validateSearch,
-  loaderDeps: ({ search }) => search,
   loader: ({ context, params }) =>
     context.queryClient.ensureInfiniteQueryData(
       topicPhotosInfiniteOptions(params.topicSlug)

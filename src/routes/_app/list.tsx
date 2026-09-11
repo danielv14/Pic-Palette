@@ -1,12 +1,13 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { OrderBy } from "unsplash-js";
 import { z } from "zod";
+import { ImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
+import { InfiniteResults } from "~/components/InfiniteResults";
 import { PageHeading } from "~/components/PageHeading";
 import { listPhotosInfiniteOptions } from "~/integration/unsplash";
 
-const listValidateSearch = z.object({
+const validateSearch = z.object({
   type: z.nativeEnum(OrderBy).default(OrderBy.LATEST),
 });
 
@@ -18,8 +19,9 @@ const ListPage = () => {
       <PageHeading>
         <span className="capitalize">{type}</span> images
       </PageHeading>
-      <InfiniteImageGrid
+      <InfiniteResults
         queryOptions={listPhotosInfiniteOptions(type)}
+        renderItem={(image, index) => <ImageCard key={image.id} image={image} index={index} />}
         emptyMessage="Oh no! Found no images :("
       />
     </>
@@ -27,17 +29,17 @@ const ListPage = () => {
 };
 
 export const Route = createFileRoute("/_app/list")({
-  head: ({ search }) => ({
-    meta: [
-      {
-        title: `${search.type.charAt(0).toUpperCase() + search.type.slice(1)} images - Pic Palette`,
-      },
-    ],
-  }),
-  validateSearch: listValidateSearch,
+  validateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) =>
     context.queryClient.ensureInfiniteQueryData(listPhotosInfiniteOptions(deps.type)),
+  head: ({ match }) => ({
+    meta: [
+      {
+        title: `${match.search.type.charAt(0).toUpperCase() + match.search.type.slice(1)} images - Pic Palette`,
+      },
+    ],
+  }),
   pendingComponent: ImageGridSkeleton,
   component: ListPage,
 });
