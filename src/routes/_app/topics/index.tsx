@@ -9,7 +9,7 @@ const TopicsPage = () => {
   const { data: result } = useQuery(listTopicsOptions());
 
   if (!result) return <TopicGridSkeleton />;
-  if (result.error) return <ApiErrorAlert message={result.error} />;
+  if (result.error !== null) return <ApiErrorAlert message={result.error} />;
 
   const topics = result.data;
 

@@ -1,6 +1,6 @@
 import { Select } from "@base-ui/react/select";
 import { CheckIcon } from "~/components/Icons";
-import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams";
+import { UNSPLASH_COLORS, type UnsplashColor } from "~/integration/unsplash";
 
 const COLOR_META: Record<UnsplashColor, { label: string; swatch: string }> = {
   black_and_white: { label: "Black & White", swatch: "bg-gradient-to-r from-black to-white" },

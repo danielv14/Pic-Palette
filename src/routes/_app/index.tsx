@@ -12,7 +12,7 @@ const HomePage = () => {
   const { data: result } = useQuery(latestPhotosQueryOptions());
 
   if (!result) return <ImageGridSkeleton />;
-  if (result.error) return <ApiErrorAlert message={result.error} />;
+  if (result.error !== null) return <ApiErrorAlert message={result.error} />;
 
   const photos = result.data;
 

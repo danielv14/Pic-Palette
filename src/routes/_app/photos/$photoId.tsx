@@ -10,7 +10,7 @@ import { PhotoPageSkeleton } from "~/components/PhotoPageSkeleton";
 import { useColorPalette } from "~/hooks/useColorPalette";
 import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
 import { photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
-import { UTM } from "~/utils/utm";
+import { photographerProfileUrl } from "~/integration/unsplash";
 
 const BackIcon = () => (
   <svg
@@ -67,7 +67,7 @@ const PhotoPage = () => {
             className="w-full rounded-2xl object-cover ring-1 ring-white/5"
           />
           <a
-            href={`https://unsplash.com/@${photo.userName}${UTM}`}
+            href={photographerProfileUrl(photo.userName)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 self-start text-sm text-text-muted transition-colors hover:text-text-primary"

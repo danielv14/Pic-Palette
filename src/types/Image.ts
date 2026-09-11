@@ -6,7 +6,3 @@ export interface UnsplashImage {
   thumbnail: string;
   photoUrl: string;
 }
-
-export interface ImageWithPalette extends UnsplashImage {
-  hexValues: string[];
-}
