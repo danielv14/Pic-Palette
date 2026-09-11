@@ -2,70 +2,61 @@ import { useMemo, useSyncExternalStore } from "react";
 import type { UnsplashImage } from "~/types/Image";
 
 const STORAGE_KEY = "pic-palette-favorites";
+const EMPTY: UnsplashImage[] = [];
 
-const readFromStorage = (): UnsplashImage[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+type FavoritesStorage = Pick<Storage, "getItem" | "setItem">;
+
+export const createFavoritesStore = (storage: FavoritesStorage | null) => {
+  const read = (): UnsplashImage[] => {
+    try {
+      const raw = storage?.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : EMPTY;
+    } catch {
+      return EMPTY;
+    }
+  };
+
+  const write = (favorites: UnsplashImage[]) => {
+    try {
+      storage?.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    } catch {
+      // storage not available
+    }
+  };
+
+  let favorites = read();
+  const listeners = new Set<() => void>();
+
+  return {
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    getSnapshot: () => favorites,
+    getServerSnapshot: () => EMPTY,
+    toggle: (image: UnsplashImage) => {
+      const alreadyFavorited = favorites.some((favorite) => favorite.id === image.id);
+      favorites = alreadyFavorited
+        ? favorites.filter((favorite) => favorite.id !== image.id)
+        : [image, ...favorites];
+      write(favorites);
+      listeners.forEach((listener) => listener());
+    },
+  };
 };
 
-const writeToStorage = (favorites: UnsplashImage[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-  } catch {
-    // storage not available
-  }
-};
-
-// Shared in-memory store - all hook instances share the same state
-type Listener = () => void;
-let currentFavorites: UnsplashImage[] = [];
-const listeners = new Set<Listener>();
-
-const notifyListeners = () => listeners.forEach((listener) => listener());
-
-const store = {
-  subscribe: (listener: Listener) => {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  },
-  getSnapshot: () => currentFavorites,
-  getServerSnapshot: (): UnsplashImage[] => [],
-  initialize: () => {
-    currentFavorites = readFromStorage();
-    notifyListeners();
-  },
-  toggle: (image: UnsplashImage) => {
-    const alreadyFavorited = currentFavorites.some((f) => f.id === image.id);
-    currentFavorites = alreadyFavorited
-      ? currentFavorites.filter((f) => f.id !== image.id)
-      : [image, ...currentFavorites];
-    writeToStorage(currentFavorites);
-    notifyListeners();
-  },
-};
-
-// Initialize once when module loads (client-side only)
-if (typeof window !== "undefined") {
-  store.initialize();
-}
+const favoritesStore = createFavoritesStore(typeof window === "undefined" ? null : window.localStorage);
 
 export const useFavorites = () => {
   const favorites = useSyncExternalStore(
-    store.subscribe,
-    store.getSnapshot,
-    store.getServerSnapshot
+    favoritesStore.subscribe,
+    favoritesStore.getSnapshot,
+    favoritesStore.getServerSnapshot,
   );
 
-  const favoriteIds = useMemo(
-    () => new Set(favorites.map((f) => f.id)),
-    [favorites]
-  );
+  const favoriteIds = useMemo(() => new Set(favorites.map((favorite) => favorite.id)), [favorites]);
 
-  const toggleFavorite = (image: UnsplashImage) => store.toggle(image);
+  const toggleFavorite = (image: UnsplashImage) => favoritesStore.toggle(image);
   const isFavorite = (imageId: string) => favoriteIds.has(imageId);
 
   return { favorites, toggleFavorite, isFavorite };
