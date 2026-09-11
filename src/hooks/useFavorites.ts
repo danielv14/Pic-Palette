@@ -45,7 +45,17 @@ export const createFavoritesStore = (storage: FavoritesStorage | null) => {
   };
 };
 
-const favoritesStore = createFavoritesStore(typeof window === "undefined" ? null : window.localStorage);
+// Reading window.localStorage itself throws when the browser blocks site data,
+// so the access has to be guarded, not only the reads and writes.
+const browserStorage = (): FavoritesStorage | null => {
+  try {
+    return typeof window === "undefined" ? null : window.localStorage;
+  } catch {
+    return null;
+  }
+};
+
+const favoritesStore = createFavoritesStore(browserStorage());
 
 export const useFavorites = () => {
   const favorites = useSyncExternalStore(
