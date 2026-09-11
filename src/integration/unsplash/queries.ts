@@ -1,37 +1,73 @@
 import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
-import type { OrderBy } from "unsplash-js";
-import type { UnsplashColor } from "~/schemas/ImageSearchParams";
-import { AMOUNT_OF_IMAGES_TO_FETCH } from "./config";
-import { searchPhotosByQuery, listPhotosByType, listTopics, getTopicPhotos, getRelatedPhotos, getPhoto, getRandomPhotos, searchCollectionsByQuery, getCollectionPhotos } from "./unsplash";
+import { OrderBy } from "unsplash-js";
+import { getNextPageParam, PAGE_SIZE, type UnsplashColor } from "./api";
+import {
+  getCollectionPhotos,
+  getPhoto,
+  getRelatedPhotos,
+  getTopicPhotos,
+  listPhotosByType,
+  listTopics,
+  searchCollectionsByQuery,
+  searchPhotosByQuery,
+} from "./serverFns";
 
 const FIVE_MINUTES = 1000 * 60 * 5;
 
-const getNextPageParam = (
-  lastPage: { data: unknown[] | null },
-  _allPages: unknown[],
-  lastPageParam: number
-) => {
-  const items = lastPage.data ?? [];
-  return items.length < AMOUNT_OF_IMAGES_TO_FETCH ? undefined : lastPageParam + 1;
-};
-
-export const searchPhotosInfiniteOptions = (
-  query: string,
-  color?: UnsplashColor
-) =>
+export const searchPhotosInfiniteOptions = (query: string, color?: UnsplashColor) =>
   infiniteQueryOptions({
     queryKey: ["photos", "search", "infinite", query, color],
     queryFn: ({ pageParam }) =>
-      searchPhotosByQuery({
-        data: {
-          query,
-          page: pageParam,
-          perPage: AMOUNT_OF_IMAGES_TO_FETCH,
-          color,
-        },
-      }),
+      searchPhotosByQuery({ data: { query, color, page: pageParam, perPage: PAGE_SIZE } }),
     initialPageParam: 1,
     getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const listPhotosInfiniteOptions = (type: OrderBy) =>
+  infiniteQueryOptions({
+    queryKey: ["photos", "list", "infinite", type],
+    queryFn: ({ pageParam }) =>
+      listPhotosByType({ data: { type, page: pageParam, perPage: PAGE_SIZE } }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const topicPhotosInfiniteOptions = (topicSlug: string) =>
+  infiniteQueryOptions({
+    queryKey: ["photos", "topic", "infinite", topicSlug],
+    queryFn: ({ pageParam }) =>
+      getTopicPhotos({ data: { topicSlug, page: pageParam, perPage: PAGE_SIZE } }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const collectionPhotosInfiniteOptions = (collectionId: string) =>
+  infiniteQueryOptions({
+    queryKey: ["photos", "collection", "infinite", collectionId],
+    queryFn: ({ pageParam }) =>
+      getCollectionPhotos({ data: { collectionId, page: pageParam, perPage: PAGE_SIZE } }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const searchCollectionsInfiniteOptions = (query: string) =>
+  infiniteQueryOptions({
+    queryKey: ["collections", "search", "infinite", query],
+    queryFn: ({ pageParam }) =>
+      searchCollectionsByQuery({ data: { query, page: pageParam, perPage: PAGE_SIZE } }),
+    initialPageParam: 1,
+    getNextPageParam,
+    staleTime: FIVE_MINUTES,
+  });
+
+export const latestPhotosQueryOptions = () =>
+  queryOptions({
+    queryKey: ["photos", "latest"],
+    queryFn: () => listPhotosByType({ data: { type: OrderBy.LATEST, page: 1, perPage: 12 } }),
     staleTime: FIVE_MINUTES,
   });
 
@@ -40,32 +76,6 @@ export const listTopicsOptions = () =>
     queryKey: ["topics"],
     queryFn: () => listTopics(),
     staleTime: Infinity,
-  });
-
-export const topicPhotosInfiniteOptions = (topicSlug: string) =>
-  infiniteQueryOptions({
-    queryKey: ["photos", "topic", "infinite", topicSlug],
-    queryFn: ({ pageParam }) =>
-      getTopicPhotos({
-        data: { topicSlug, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
-      }),
-    initialPageParam: 1,
-    getNextPageParam,
-    staleTime: FIVE_MINUTES,
-  });
-
-export const randomPhotosQueryOptions = () =>
-  queryOptions({
-    queryKey: ["photos", "random"],
-    queryFn: () => getRandomPhotos(),
-    staleTime: FIVE_MINUTES,
-  });
-
-export const latestPhotosQueryOptions = () =>
-  queryOptions({
-    queryKey: ["photos", "latest"],
-    queryFn: () => listPhotosByType({ data: { type: "latest", page: 1, perPage: 12 } }),
-    staleTime: FIVE_MINUTES,
   });
 
 export const photoQueryOptions = (photoId: string) =>
@@ -80,40 +90,4 @@ export const relatedPhotosQueryOptions = (photoId: string) =>
     queryKey: ["photos", "related", photoId],
     queryFn: () => getRelatedPhotos({ data: photoId }),
     staleTime: Infinity,
-  });
-
-export const searchCollectionsInfiniteOptions = (query: string) =>
-  infiniteQueryOptions({
-    queryKey: ["collections", "search", "infinite", query],
-    queryFn: ({ pageParam }) =>
-      searchCollectionsByQuery({
-        data: { query, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
-      }),
-    initialPageParam: 1,
-    getNextPageParam,
-    staleTime: FIVE_MINUTES,
-  });
-
-export const collectionPhotosInfiniteOptions = (collectionId: string) =>
-  infiniteQueryOptions({
-    queryKey: ["photos", "collection", "infinite", collectionId],
-    queryFn: ({ pageParam }) =>
-      getCollectionPhotos({
-        data: { collectionId, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
-      }),
-    initialPageParam: 1,
-    getNextPageParam,
-    staleTime: FIVE_MINUTES,
-  });
-
-export const listPhotosInfiniteOptions = (type: OrderBy) =>
-  infiniteQueryOptions({
-    queryKey: ["photos", "list", "infinite", type],
-    queryFn: ({ pageParam }) =>
-      listPhotosByType({
-        data: { type, page: pageParam, perPage: AMOUNT_OF_IMAGES_TO_FETCH },
-      }),
-    initialPageParam: 1,
-    getNextPageParam,
-    staleTime: FIVE_MINUTES,
   });

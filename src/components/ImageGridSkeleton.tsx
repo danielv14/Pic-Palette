@@ -1,11 +1,13 @@
 import { ImageCardLoading } from "~/components/ImageCardLoading";
 import { ImageGrid } from "~/components/ImageGrid";
-import { AMOUNT_OF_IMAGES_TO_FETCH } from "~/integration/unsplash/config";
+import { PAGE_SIZE } from "~/integration/unsplash/api";
 
 export const ImageGridSkeleton = () => (
-  <ImageGrid>
-    {Array.from({ length: AMOUNT_OF_IMAGES_TO_FETCH }).map((_, index) => (
-      <ImageCardLoading key={index} />
-    ))}
-  </ImageGrid>
+  <div role="status" aria-label="Loading">
+    <ImageGrid>
+      {Array.from({ length: PAGE_SIZE }).map((_, index) => (
+        <ImageCardLoading key={index} />
+      ))}
+    </ImageGrid>
+  </div>
 );

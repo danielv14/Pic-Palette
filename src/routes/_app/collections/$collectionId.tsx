@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
+import { renderImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
+import { InfiniteResults } from "~/components/InfiniteResults";
 import { collectionPhotosInfiniteOptions } from "~/integration/unsplash";
 
 const validateSearch = z.object({
@@ -26,8 +27,9 @@ const CollectionPhotosPage = () => {
           Back to results
         </Link>
       </div>
-      <InfiniteImageGrid
+      <InfiniteResults
         queryOptions={collectionPhotosInfiniteOptions(collectionId)}
+        renderItem={renderImageCard}
         emptyMessage="Found no photos in this collection."
       />
     </>
@@ -36,9 +38,8 @@ const CollectionPhotosPage = () => {
 
 export const Route = createFileRoute("/_app/collections/$collectionId")({
   validateSearch,
-  loaderDeps: ({ search }) => search,
   loader: ({ context, params }) =>
-    context.queryClient.prefetchInfiniteQuery(
+    context.queryClient.ensureInfiniteQueryData(
       collectionPhotosInfiniteOptions(params.collectionId)
     ),
   pendingComponent: ImageGridSkeleton,

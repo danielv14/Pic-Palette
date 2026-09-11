@@ -4,8 +4,7 @@ import { Select } from "@base-ui/react/select";
 import { useNavigate } from "@tanstack/react-router";
 import { CheckIcon } from "~/components/Icons";
 
-export const SEARCH_TYPES = ["photos", "collections"] as const;
-export type SearchType = (typeof SEARCH_TYPES)[number];
+import { SEARCH_TYPES, type SearchType } from "~/types/SearchType";
 
 const LABELS: Record<SearchType, string> = {
   photos: "Photos",

@@ -1,20 +1,20 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
-import { ApiErrorAlert } from "~/components/ApiErrorAlert";
 import { CollectionCard } from "~/components/CollectionCard";
 import { ColorFilter } from "~/components/ColorFilter";
+import { renderImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
-import { InfiniteImageGrid } from "~/components/InfiniteImageGrid";
-import { LoadMoreButton } from "~/components/LoadMoreButton";
-import { NoImagesAlert } from "~/components/NoImagesAlert";
+import { InfiniteResults } from "~/components/InfiniteResults";
 import { PageHeading } from "~/components/PageHeading";
-import { useInfinitePages } from "~/hooks/useInfinitePages";
-import { searchCollectionsInfiniteOptions, searchPhotosInfiniteOptions } from "~/integration/unsplash";
-import { UNSPLASH_COLORS, type UnsplashColor } from "~/schemas/ImageSearchParams";
-import { SEARCH_TYPES } from "~/components/Searchbar";
+import {
+  searchCollectionsInfiniteOptions,
+  searchPhotosInfiniteOptions,
+  UNSPLASH_COLORS,
+  type UnsplashColor,
+} from "~/integration/unsplash";
+import { SEARCH_TYPES } from "~/types/SearchType";
 
-const searchValidateSearch = z.object({
+const validateSearch = z.object({
   query: z.string().default(""),
   color: z.enum(UNSPLASH_COLORS).optional(),
   type: z.enum(SEARCH_TYPES).default("photos"),
@@ -38,43 +38,27 @@ const PhotoResults = ({ query, color }: { query: string; color?: UnsplashColor }
         </h2>
         <ColorFilter value={color} onChange={handleColorChange} />
       </div>
-      <InfiniteImageGrid
+      <InfiniteResults
         queryOptions={searchPhotosInfiniteOptions(query, color)}
+        renderItem={renderImageCard}
         emptyMessage="Found no images. Search for something else."
       />
     </>
   );
 };
 
-const CollectionResults = ({ query }: { query: string }) => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
-    useInfiniteQuery(searchCollectionsInfiniteOptions(query));
-
-  const { items: collections, firstError } = useInfinitePages(data?.pages);
-
-  if (collections.length === 0) {
-    if (isFetching) return <ImageGridSkeleton />;
-    if (firstError) return <ApiErrorAlert message={firstError} />;
-    return <NoImagesAlert>Found no collections. Search for something else.</NoImagesAlert>;
-  }
-
-  return (
-    <>
-      <PageHeading>
-        Collections for &quot;<span className="italic">{query}</span>&quot;
-      </PageHeading>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {collections.map((collection) => (
-          <CollectionCard key={collection.id} collection={collection} />
-        ))}
-      </div>
-      {isFetchingNextPage && <ImageGridSkeleton />}
-      {hasNextPage && !isFetchingNextPage && (
-        <LoadMoreButton onClick={() => fetchNextPage()} />
-      )}
-    </>
-  );
-};
+const CollectionResults = ({ query }: { query: string }) => (
+  <>
+    <PageHeading>
+      Collections for &quot;<span className="italic">{query}</span>&quot;
+    </PageHeading>
+    <InfiniteResults
+      queryOptions={searchCollectionsInfiniteOptions(query)}
+      renderItem={(collection) => <CollectionCard key={collection.id} collection={collection} />}
+      emptyMessage="Found no collections. Search for something else."
+    />
+  </>
+);
 
 const SearchPage = () => {
   const { query, color, type } = useSearch({ from: "/_app/search" });
@@ -87,16 +71,7 @@ const SearchPage = () => {
 };
 
 export const Route = createFileRoute("/_app/search")({
-  head: ({ search }) => ({
-    meta: [
-      {
-        title: search.query
-          ? `${search.query} - Pic Palette`
-          : "Search - Pic Palette",
-      },
-    ],
-  }),
-  validateSearch: searchValidateSearch,
+  validateSearch,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) => {
     if (deps.type === "collections") {
@@ -108,6 +83,15 @@ export const Route = createFileRoute("/_app/search")({
       searchPhotosInfiniteOptions(deps.query, deps.color)
     );
   },
+  head: ({ match }) => ({
+    meta: [
+      {
+        title: match.search.query
+          ? `${match.search.query} - Pic Palette`
+          : "Search - Pic Palette",
+      },
+    ],
+  }),
   pendingComponent: ImageGridSkeleton,
   component: SearchPage,
 });

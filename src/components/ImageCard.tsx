@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu } from "@base-ui/react";
 import { Link } from "@tanstack/react-router";
-import { UTM } from "~/utils/utm";
+import { photographerProfileUrl, photoPageUrl } from "~/integration/unsplash";
 import { AdjustIcon, CopyIcon, ExternalLinkIcon, HeartIcon, PersonIcon } from "~/components/Icons";
 import { CardOverlay } from "~/components/CardOverlay";
 import { Tooltip } from "~/components/Tooltip";
@@ -16,6 +16,10 @@ interface ImageCardProps {
   image: UnsplashImage;
   index: number;
 }
+
+export const renderImageCard = (image: UnsplashImage, index: number) => (
+  <ImageCard key={image.id} image={image} index={index} />
+);
 
 export const ImageCard = ({ image, index }: ImageCardProps) => {
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
@@ -120,7 +124,7 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
           </p>
           <div className="flex flex-col gap-2">
             <a
-              href={`https://unsplash.com/@${image.userName}${UTM}`}
+              href={photographerProfileUrl(image.userName)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-between rounded-xl border border-surface-3 px-4 py-3 text-sm text-text-secondary transition-colors hover:border-brand-500 hover:text-text-primary"
@@ -129,7 +133,7 @@ export const ImageCard = ({ image, index }: ImageCardProps) => {
               <ExternalLinkIcon />
             </a>
             <a
-              href={`${image.photoUrl}${UTM}`}
+              href={photoPageUrl(image.photoUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-between rounded-xl border border-surface-3 px-4 py-3 text-sm text-text-secondary transition-colors hover:border-brand-500 hover:text-text-primary"
