@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { OrderBy } from "unsplash-js";
 import { z } from "zod";
-import { ImageCard } from "~/components/ImageCard";
+import { renderImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
 import { InfiniteResults } from "~/components/InfiniteResults";
 import { PageHeading } from "~/components/PageHeading";
@@ -21,7 +21,7 @@ const ListPage = () => {
       </PageHeading>
       <InfiniteResults
         queryOptions={listPhotosInfiniteOptions(type)}
-        renderItem={(image, index) => <ImageCard key={image.id} image={image} index={index} />}
+        renderItem={renderImageCard}
         emptyMessage="Oh no! Found no images :("
       />
     </>

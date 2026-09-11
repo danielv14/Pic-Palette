@@ -17,6 +17,10 @@ interface ImageCardProps {
   index: number;
 }
 
+export const renderImageCard = (image: UnsplashImage, index: number) => (
+  <ImageCard key={image.id} image={image} index={index} />
+);
+
 export const ImageCard = ({ image, index }: ImageCardProps) => {
   const [isAdjustDialogOpen, setIsAdjustDialogOpen] = useState(false);
   const [isAuthorDialogOpen, setIsAuthorDialogOpen] = useState(false);

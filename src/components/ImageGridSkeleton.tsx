@@ -1,6 +1,6 @@
 import { ImageCardLoading } from "~/components/ImageCardLoading";
 import { ImageGrid } from "~/components/ImageGrid";
-import { PAGE_SIZE } from "~/integration/unsplash";
+import { PAGE_SIZE } from "~/integration/unsplash/api";
 
 export const ImageGridSkeleton = () => (
   <div role="status" aria-label="Loading">

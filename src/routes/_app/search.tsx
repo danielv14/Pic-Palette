@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router"
 import { z } from "zod";
 import { CollectionCard } from "~/components/CollectionCard";
 import { ColorFilter } from "~/components/ColorFilter";
-import { ImageCard } from "~/components/ImageCard";
+import { renderImageCard } from "~/components/ImageCard";
 import { ImageGridSkeleton } from "~/components/ImageGridSkeleton";
 import { InfiniteResults } from "~/components/InfiniteResults";
 import { PageHeading } from "~/components/PageHeading";
@@ -40,7 +40,7 @@ const PhotoResults = ({ query, color }: { query: string; color?: UnsplashColor }
       </div>
       <InfiniteResults
         queryOptions={searchPhotosInfiniteOptions(query, color)}
-        renderItem={(image, index) => <ImageCard key={image.id} image={image} index={index} />}
+        renderItem={renderImageCard}
         emptyMessage="Found no images. Search for something else."
       />
     </>

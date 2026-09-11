@@ -9,8 +9,7 @@ import { PaletteAdjustControls } from "~/components/PaletteAdjustControls";
 import { PhotoPageSkeleton } from "~/components/PhotoPageSkeleton";
 import { useColorPalette } from "~/hooks/useColorPalette";
 import { useFavoriteToggle } from "~/hooks/useFavoriteToggle";
-import { photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
-import { photographerProfileUrl } from "~/integration/unsplash";
+import { photographerProfileUrl, photoQueryOptions, relatedPhotosQueryOptions } from "~/integration/unsplash";
 
 const BackIcon = () => (
   <svg
