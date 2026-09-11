@@ -9,6 +9,7 @@ Photo browsing app that fetches images from Unsplash and extracts color palettes
 ```bash
 npm run dev    # Dev server on http://localhost:3000
 npm run build  # Production build
+npm test       # Vitest
 npm start      # Run production server (node .output/server/index.mjs)
 ```
 
@@ -25,22 +26,23 @@ UNSPLASH_ACCESS_KEY=your_access_key
 src/
   components/       # React UI components
   integration/      # External API integrations
-    unsplash/       # All Unsplash API logic (server fns, queries, palette extraction)
+    unsplash/       # client.ts (Unsplash client), api.ts (pure endpoint calls, error mapping),
+                    # serverFns.ts (createServerFn adapters), queries.ts (TanStack Query options)
   routes/           # File-based routes (TanStack Router)
     __root.tsx      # Root layout
     _app.tsx        # App layout
     _app/           # Pages: index, search, list
-  schemas/          # Zod validation schemas for search/list/pagination params
   types/            # TypeScript interfaces
-  utils/            # Helpers (color extraction, sleep)
+  utils/            # Helpers (color adjust, sleep)
 ```
 
 ## Key Patterns
 
 - **Routing:** File-based with TanStack Router. `routeTree.gen.ts` is auto-generated - never edit manually.
-- **Data fetching:** Server functions via `createServerFn` from `@tanstack/react-start`. All Unsplash API calls go through `src/integration/unsplash/`.
-- **Infinite scroll:** TanStack Query `infiniteQueryOptions` with a "Load more" button.
-- **Validation:** Zod schemas in `src/schemas/` are used for both runtime validation and type inference (`z.infer<>`). Route search params are validated via `validateSearch`.
+- **Data fetching:** Server functions via `createServerFn` from `@tanstack/react-start` are thin adapters over pure functions in `src/integration/unsplash/api.ts`, which take the Unsplash client as an argument so tests can pass a fake.
+- **Infinite scroll:** `InfiniteResults` renders any paged `ApiResult` list with a "Load more" button; routes pass query options and a render function.
+- **Validation:** Route search params are validated with Zod via `validateSearch` in each route file. Server function params are plain types.
+- **Tests:** Vitest with jsdom. Pure modules (api, favorites store, color adjust) and `InfiniteResults` have tests; run `npm test`.
 - **Styling:** Tailwind CSS v4 with custom OKLCH color variables and custom fonts (Outfit/Inter) defined in `src/styles.css`.
 - **Path aliases:** `~/` maps to `src/`.
 

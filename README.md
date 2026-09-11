@@ -26,7 +26,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 - [Tailwind CSS v4](https://tailwindcss.com) - Styling
 - [Unsplash API](https://unsplash.com/developers) - Photo source
 - [node-vibrant](https://github.com/Vibrant-Colors/node-vibrant) - Color palette extraction
-- [Zod](https://zod.dev) - Schema validation for API responses and search params
+- [Zod](https://zod.dev) - Validation of route search params
 
 ## Scripts
 
