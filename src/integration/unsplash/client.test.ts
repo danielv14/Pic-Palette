@@ -19,6 +19,14 @@ describe("createUnsplashClient", () => {
     expect(result).toEqual({ response: { results: [] } });
   });
 
+  it("falls back to an empty result list when the body has none", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 200 })));
+
+    const result = await createUnsplashClient("key123").getRelatedPhotos("abc");
+
+    expect(result).toEqual({ response: { results: [] } });
+  });
+
   it("reports a non-ok status in the errors array", async () => {
     vi.stubGlobal(
       "fetch",

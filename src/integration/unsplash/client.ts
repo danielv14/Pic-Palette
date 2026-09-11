@@ -26,7 +26,8 @@ export const createUnsplashClient = (accessKey: string): UnsplashClient => ({
     if (!response.ok) {
       return { errors: [`${response.status} ${response.statusText}`] };
     }
-    return { response: await response.json() };
+    const json = await response.json();
+    return { response: { results: json.results ?? [] } };
   },
 });
 
